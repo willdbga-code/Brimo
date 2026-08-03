@@ -1,4 +1,25 @@
-# Node & Next.js dependencies / build
+# Ignore all heavy non-website folders, raw footage, and premiere files
+1x/
+Catalogo/
+"Pós Prod - Brimo"/
+Pós Prod - Brimo/
+Raw/
+"Stock and CC Libraries Downloads"/
+Stock and CC Libraries Downloads/
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Auto-Save/
+"Brimo - Moodboard"/
+Brimo - Moodboard/
+
+# Video & Raw camera files
+*.mp4
+*.MP4
+*.ARW
+*.THM
+*.prproj
+*.prin
+
+# Node & Next.js cache/builds
 node_modules/
 **/node_modules/
 .next/
@@ -7,26 +28,9 @@ out/
 build/
 dist/
 
-# Raw camera dumps (Sony ARW raw files)
-*.ARW
-Raw/
-**/Raw/
-
-# Premiere & Lightroom temporary files / previews / auto-save / cache
-Adobe Premiere Pro Audio Previews/
-Adobe Premiere Pro Auto-Save/
-*.lrcat-data/
-*.lrprev/
-*.lrcat.lock
-
-# System & IDE files
+# OS & Environment
 .DS_Store
 Thumbs.db
 desktop.ini
-.vscode/
-.idea/
-
-# Logs & Environment
-*.log
 .env
-.env*.local
+*.log
