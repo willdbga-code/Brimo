@@ -1,0 +1,32 @@
+# Node & Next.js dependencies / build
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+build/
+dist/
+
+# Raw camera dumps (Sony ARW raw files)
+*.ARW
+Raw/
+**/Raw/
+
+# Premiere & Lightroom temporary files / previews / auto-save / cache
+Adobe Premiere Pro Audio Previews/
+Adobe Premiere Pro Auto-Save/
+*.lrcat-data/
+*.lrprev/
+*.lrcat.lock
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Logs & Environment
+*.log
+.env
+.env*.local

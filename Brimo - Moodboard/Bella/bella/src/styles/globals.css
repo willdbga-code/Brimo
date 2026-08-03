@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Outfit:wght@200;300;400;500;600;700;800&family=Pirata+One&family=UnifrakturMaguntia&display=swap');
+
+:root {
+  /* Mystical & Gothic Palette */
+  --bg-primary: #06020c;       /* Shadows / Dark Dungeon */
+  --bg-secondary: #0f071b;     /* Sorcerer Room Purple */
+  --bg-tertiary: #190a2c;      /* Spell Purple */
+  
+  /* Woodcut Parchment Card Palette */
+  --bg-parchment: #f4ecd8;     /* Aged Medieval Paper */
+  --bg-parchment-dark: #e8dcb9; /* Shadowed Parchment */
+  --text-ink: #11091e;         /* Pure Calligraphy Nanquim Ink */
+  --text-ink-muted: #534563;   
+  
+  --accent-gold: #c29d38;      /* Antique Hand-Painted Gold */
+  --accent-gold-bright: #ffd700; 
+  --accent-purple: #8b32cc;    /* Magic Light */
+  --accent-purple-bright: #b866ff;
+  --accent-purple-glow: rgba(139, 50, 204, 0.4);
+  
+  --text-primary: #f7f3eb;     /* Star Dust White */
+  --text-secondary: #c5b8d6;   /* Lavender Fog */
+  --text-lavender: #a692bd;
+  
+  --border-gold: rgba(194, 157, 56, 0.4);
+  --border-gold-dim: rgba(194, 157, 56, 0.15);
+  
+  /* Fonts */
+  --font-gothic: 'Pirata One', display;
+  --font-serif: 'Cinzel Decorative', serif;
+  --font-editorial: 'Outfit', sans-serif;
+  --font-vintage: 'UnifrakturMaguntia', cursive;
+
+  --transition-magical: 0.9s cubic-bezier(0.19, 1, 0.22, 1);
+  --transition-fast: 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-editorial);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Background Texture Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: color-dodge;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--accent-purple), var(--accent-gold));
+  border-radius: 3px;
+}
+
+/* Typography */
+h1, h2, h3, h4, .gothic-title {
+  font-family: var(--font-gothic);
+  letter-spacing: 0.05em;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(194, 157, 56, 0.3);
+}
+
+.serif-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.vintage-text {
+  font-family: var(--font-vintage);
+  font-size: 1.8rem;
+  color: var(--accent-purple-bright);
+}
+
+p {
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+/* Links */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-gold-bright);
+}
+
+/* Woodcut / Medieval Paper Panel */
+.parchment-panel {
+  background-color: var(--bg-parchment);
+  background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 0), radial-gradient(rgba(0,0,0,0.03) 1px, transparent 0);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+  color: var(--text-ink);
+  border: 3px double var(--text-ink);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85);
+  position: relative;
+  border-radius: 4px;
+}
+
+/* Rough Ink Border styling */
+.medieval-ink-border {
+  border: 2px solid var(--text-ink);
+  position: relative;
+}
+
+.medieval-ink-border::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 1px dashed rgba(17, 9, 30, 0.3);
+  pointer-events: none;
+}
+
+/* Circular Alchemical Orbital Interface */
+.alchemical-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  height: 420px;
+  border: 1.5px stroke rgba(194, 157, 56, 0.25);
+  border-style: double;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: orbit-rotate-clockwise 25s linear infinite;
+}
+
+.alchemical-ring::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--accent-gold);
+  background: var(--bg-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-gold);
+}
+
+.alchemical-ring-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  height: 480px;
+  border: 1px dashed rgba(184, 102, 255, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: orbit-rotate-counter 40s linear infinite;
+}
+
+/* Animations */
+@keyframes orbit-rotate-clockwise {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes orbit-rotate-counter {
+  0% { transform: translate(-50%, -50%) rotate(360deg); }
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+@keyframes float-slow {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.96);
+  filter: blur(8px);
+  transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: opacity, transform, filter;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
