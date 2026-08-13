@@ -63,23 +63,17 @@
             text-decoration: none; 
         }
         
-        .logo-symbol {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--brimo-orange), var(--brimo-red));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(232, 93, 4, 0.5);
-            border: 2px solid var(--gold);
+        .logo-img {
+            height: 52px;
+            width: auto;
+            max-width: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(232, 93, 4, 0.6));
+            transition: transform 0.3s ease;
         }
 
-        .logo-symbol span {
-            font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
-            color: var(--white);
-            font-weight: 900;
+        .css-logo:hover .logo-img {
+            transform: scale(1.08);
         }
 
         .logo-text-group { display: flex; flex-direction: column; }
@@ -824,7 +818,7 @@
     <!-- ================= NAVBAR ================= -->
     <header>
         <a href="#" class="css-logo">
-            <div class="logo-symbol"><span>ب</span></div>
+            <img src="Logo/Logo.svg" onerror="this.onerror=null; this.src='Logo/Prancheta 1.png';" alt="Logo Brimo" class="logo-img">
             <div class="logo-text-group">
                 <div class="logo-text">Brimo</div>
                 <div class="logo-sub">Comida Árabe</div>
