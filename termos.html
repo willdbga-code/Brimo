@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termos de Uso | BRIMO Comida Árabe</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --brimo-orange: #E85D04; 
+            --brimo-orange-hover: #DC2F02;
+            --brimo-red: #9D0208;
+            --brimo-dark: #121212;
+            --brimo-card-bg: #1E1E1E;
+            --brimo-light: #F8F5F2;
+            --text-muted: #A0A0A0;
+            --white: #FFFFFF;
+            --gold: #FFBA08; 
+            --border-glow: rgba(232, 93, 4, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--brimo-dark); 
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif; 
+            line-height: 1.7;
+            padding-bottom: 60px; 
+            overflow-x: hidden;
+        }
+
+        /* HEADER NAVBAR */
+        header {
+            background-color: #0d0d0d;
+            background-image: radial-gradient(rgba(232, 93, 4, 0.15) 1px, transparent 0);
+            background-size: 20px 20px;
+            padding: 14px 5%;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: sticky; 
+            top: 0; 
+            z-index: 900; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+            border-bottom: 2px solid var(--brimo-orange);
+        }
+
+        .css-logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            text-decoration: none; 
+        }
+
+        .logo-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(232, 93, 4, 0.6));
+        }
+
+        .logo-text-group { display: flex; flex-direction: column; }
+        .logo-text { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--gold); line-height: 1; font-weight: 900; }
+        .logo-sub { font-size: 0.65rem; color: #DDD; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; margin-top: 2px; }
+
+        .nav-back-btn {
+            background: linear-gradient(45deg, var(--brimo-orange), var(--brimo-red));
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(232, 93, 4, 0.4);
+            transition: 0.3s;
+            border: 1px solid var(--gold);
+        }
+
+        .nav-back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(232, 93, 4, 0.6);
+        }
+
+        /* PAGE CONTAINER */
+        .legal-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(255, 186, 8, 0.2);
+            padding-bottom: 25px;
+        }
+
+        .legal-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .legal-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .legal-card {
+            background: var(--brimo-card-bg);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 30px;
+        }
+
+        .legal-section {
+            margin-bottom: 30px;
+        }
+
+        .legal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .legal-section h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+            border-left: 4px solid var(--brimo-orange);
+            padding-left: 12px;
+        }
+
+        .legal-section p, .legal-section ul {
+            color: #DDD;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .legal-section ul {
+            padding-left: 20px;
+        }
+
+        .legal-section li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: rgba(232, 93, 4, 0.1);
+            border: 1px solid var(--brimo-orange);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0A0A0A;
+            border-top: 3px solid var(--brimo-orange);
+            padding: 40px 20px 25px 20px;
+            color: #AAA;
+            font-size: 0.85rem;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-content a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .footer-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <a href="index.html" class="css-logo">
+            <img src="Logo/Logo.svg" onerror="this.onerror=null; this.src='Logo/Prancheta 1.png';" alt="Logo Brimo" class="logo-img">
+            <div class="logo-text-group">
+                <div class="logo-text">Brimo</div>
+                <div class="logo-sub">Comida Árabe</div>
+            </div>
+        </a>
+
+        <a href="index.html" class="nav-back-btn">
+            ➔ Voltar ao Cardápio
+        </a>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL DOS TERMOS DE USO -->
+    <main class="legal-container">
+        <div class="legal-header">
+            <h1>Termos e Condições de Uso</h1>
+            <p>Última atualização: 12 de Agosto de 2026 | BRIMO COMIDA ARABE LTDA</p>
+        </div>
+
+        <div class="legal-card">
+            <div class="legal-section">
+                <h2>1. Apresentação e Qualificação da Empresa</h2>
+                <p>O presente documento estabelece os Termos e Condições de Uso vigentes para a utilização da plataforma web, consulta de cardápio e realização de pedidos junto ao estabelecimento <strong>BRIMO COMIDA ARABE LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ/MF sob o nº <strong>45.892.123/0001-90</strong>, com sede comercial estabelecida em São José dos Campos/SP, doravante denominada simplesmente "Brimo" ou "Estabelecimento".</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>2. Aceitação dos Termos de Uso</h2>
+                <p>Ao acessar nosso site, consultar o cardápio digital, selecionar produtos ou direcionar solicitações de pedidos via WhatsApp, o Usuário/Consumidor declara ter lido, compreendido e aceito integralmente todas as disposições destes Termos de Uso e da nossa <a href="privacidade.html" style="color:var(--gold);">Política de Privacidade</a>, em plena conformidade com a legislação brasileira vigente, em especial a Lei nº 8.078/1990 (Código de Defesa do Consumidor) e a Lei nº 12.965/2014 (Marco Civil da Internet).</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>3. Funcionamento dos Pedidos e Horários de Atendimento</h2>
+                <p>O Brimo opera na preparação artesanal de alimentos da culinária árabe típica. O atendimento digital e o recebimento de pedidos estão sujeitos aos seguintes critérios:</p>
+                <ul>
+                    <li><strong>Horário de Funcionamento:</strong> Terça-feira a Domingo, das 18:00h às 23:30h (Segundas-feiras: Fechado). Pedidos efetuados fora deste intervalo serão processados no próximo turno de operação.</li>
+                    <li><strong>Modalidades de Atendimento:</strong> Retirada no Local ou Entrega em Domicílio (Delivery) em bairros compreendidos na área de cobertura oficial.</li>
+                    <li><strong>Confirmação de Pedido:</strong> O envio do pedido pelo site direciona a mensagem estruturada ao WhatsApp oficial. A validação final da comanda e a estimativa precisa do tempo de entrega/preparo ocorrem mediante confirmação da equipe de atendimento.</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <h2>4. Preços, Ingredientes e Adicionais</h2>
+                <p>Todos os valores exibidos no cardápio digital estão expressos em Moeda Corrente Nacional (BRL - R$) e incluem a descrição precisa dos pratos e ingredientes utilizados:</p>
+                <ul>
+                    <li><strong>Modificações e Adicionais:</strong> Opções personalizadas (como o acréscimo de Pão Folha no valor adicional fixo de R$ 10,00 ou molhos extras) serão devidamente somadas ao valor total do pedido.</li>
+                    <li><strong>Taxa de Entrega:</strong> O valor do frete de entrega em domicílio varia conforme a distância do endereço de destino informado pelo cliente.</li>
+                    <li><strong>Disponibilidade de Estoque:</strong> Por se tratar de culinária artesanal com ingredientes frescos, determinados itens podem sofrer indisponibilidade temporária. Caso ocorra falta de insumos, o consumidor será prontamente comunicado para substituição ou cancelamento do item.</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <strong>💡 Nota Importante sobre Produtos Alimentícios Perecíveis:</strong> Em cumprimento às normas sanitárias e ao Art. 30 e seguintes do Código de Defesa do Consumidor, recomendamos que os alimentos sejam consumidos imediatamente após o recebimento para garantir o máximo padrão de sabor, higiene e temperatura ideais.
+            </div>
+
+            <div class="legal-section">
+                <h2>5. Política de Cancelamento, Troca e Reembolso</h2>
+                <p>Diante da natureza perecível dos alimentos comercializados pelo Brimo, o cancelamento ou alteração do pedido observará os seguintes regramentos legalmente fundamentados:</p>
+                <ul>
+                    <li><strong>Cancelamento Pré-Preparo:</strong> O cliente poderá solicitar o cancelamento sem ônus caso o pedido ainda não tenha entrado em fase de produção na cozinha.</li>
+                    <li><strong>Impossibilidade após Produção:</strong> Uma vez iniciada a preparação gastronômica do item personalizado, não será aceito o cancelamento imotivado.</li>
+                    <li><strong>Inconformidades ou Defeitos de Qualidade:</strong> Na hipótese de entrega de produto em desacordo com a comanda solicitada ou com vício de qualidade, o cliente deverá notificar o Brimo imediatamente via WhatsApp (com envio de foto do item), para que seja providenciada a substituição ágil sem custo adicional ou o ressarcimento proporcional do valor.</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <h2>6. Propriedade Intelectual e Marcas Registradas</h2>
+                <p>Todo o conteúdo disponibilizado neste website — incluindo fotografias de estúdio dos pratos, logotipos, marcas, layout, design system, código-fonte e textos descritivos — constitui propriedade intelectual exclusiva da <strong>BRIMO COMIDA ARABE LTDA</strong>. É terminantemente proibida a cópia, reprodução, comercialização ou distribuição não autorizada de qualquer elemento visual sem prévia autorização por escrito.</p>
+            </div>
+
+            <div class="legal-section">
+                <h2>7. Alterações destes Termos e Foro de Eleição</h2>
+                <p>O Brimo reserva-se o direito de atualizar ou modificar estes Termos de Uso a qualquer momento, visando o aprimoramento dos serviços e adequação normativa. As alterações entram em vigor imediatamente após a sua publicação na plataforma. Para a solução de eventuais controvérsias oriundas deste termo, elege-se o Foro da Comarca da Sede do Estabelecimento.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER COMPLETO -->
+    <footer>
+        <div class="footer-content">
+            <p><strong>BRIMO COMIDA ARABE LTDA</strong> | CNPJ: 45.892.123/0001-90</p>
+            <p style="margin-top: 6px;">© 2026 BRIMO Comida Árabe. Todos os direitos reservados. | <a href="termos.html">Termos de Uso</a> | <a href="privacidade.html">Política de Privacidade</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>
