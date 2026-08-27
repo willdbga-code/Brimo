@@ -955,7 +955,6 @@
 
             <!-- Card 2 -->
             <div class="card">
-                <div class="card-badge green">Mais Pedido</div>
                 <div class="card-img-wrapper">
                     <img src="Fotos/Shawerma de Frango.jpg" class="card-img" alt="Shawarma de Frango">
                 </div>
@@ -975,7 +974,6 @@
 
             <!-- Card 3 -->
             <div class="card">
-                <div class="card-badge gold">Recomendado</div>
                 <div class="card-img-wrapper">
                     <img src="Fotos/Shawerma Misto.jpg" class="card-img" alt="Shawarma Misto">
                 </div>
@@ -1050,26 +1048,6 @@
 
             <!-- Card 7 -->
             <div class="card">
-                <div class="card-badge green">Especial</div>
-                <div class="card-img-wrapper">
-                    <img src="Fotos/Sessão do Studio-153.jpg" class="card-img" alt="Tata Lanche">
-                </div>
-                <div class="card-content">
-                    <div class="card-header-info">
-                        <h3 class="card-title">Tata Lanche</h3>
-                        <span class="card-price">R$ 18,00</span>
-                    </div>
-                    <p class="card-desc">Shawarma artesanal recheado com batatas temperadas e frango suculento regado ao creme de alho.</p>
-                    <div class="pao-folha-opt">
-                        <input type="checkbox" id="pf-6" onchange="updateCardPrice(this)">
-                        <label for="pf-6">+ No Pão Folha (+ R$ 10,00)</label>
-                    </div>
-                    <button class="add-btn" onclick="addToCart(this, 'Tata Lanche', 18, 'pf-6')">Adicionar ao Pedido</button>
-                </div>
-            </div>
-
-            <!-- Card 8 -->
-            <div class="card">
                 <div class="card-img-wrapper">
                     <img src="Fotos/Sessão do Studio-075.jpg" class="card-img" alt="Lanche de Batata Frita">
                 </div>
@@ -1080,10 +1058,10 @@
                     </div>
                     <p class="card-desc">Pão Sírio recheado com batata frita crocante, creme de alho intenso, picles artesanal e salada especial.</p>
                     <div class="pao-folha-opt">
-                        <input type="checkbox" id="pf-7" onchange="updateCardPrice(this)">
-                        <label for="pf-7">+ No Pão Folha (+ R$ 10,00)</label>
+                        <input type="checkbox" id="pf-6" onchange="updateCardPrice(this)">
+                        <label for="pf-6">+ No Pão Folha (+ R$ 10,00)</label>
                     </div>
-                    <button class="add-btn" onclick="addToCart(this, 'Lanche de Batata Frita', 20, 'pf-7')">Adicionar ao Pedido</button>
+                    <button class="add-btn" onclick="addToCart(this, 'Lanche de Batata Frita', 20, 'pf-6')">Adicionar ao Pedido</button>
                 </div>
             </div>
         </div>
@@ -1094,51 +1072,67 @@
         </div>
 
         <div class="menu-grid">
-            <!-- Card 9 -->
+            <!-- Card 8 -->
             <div class="card">
                 <div class="card-badge">Fartura Especial</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/Shawerma no Prato Misto.jpg" class="card-img" alt="Prato Shawarma Carne">
+                    <img src="Fotos/Sessão do Studio-078.jpg" class="card-img" alt="Prato Shawarma Carne">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
                         <h3 class="card-title">Prato Shawarma Carne</h3>
                         <span class="card-price">R$ 50,00</span>
                     </div>
-                    <p class="card-desc">Porção generosa de carne de Shawarma, acompanhada de verdes frescos, batata frita, pasta de alho e molho tahine.</p>
+                    <p class="card-desc">Porção generosa de carne de Shawarma, acompanhada de verdes frescos, batata frita crocante, pão sírio, pasta de alho e molho tahine.</p>
                     <button class="add-btn" onclick="addToCart(this, 'Prato Shawarma Carne', 50)">Adicionar ao Pedido</button>
                 </div>
             </div>
 
-            <!-- Card 10 -->
+            <!-- Card 9 -->
             <div class="card">
                 <div class="card-badge green">Prato Completo</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/Shawerma no Prato Frango.jpg" class="card-img" alt="Prato Shawarma Frango">
+                    <img src="Fotos/Sessão do Studio-152.jpg" class="card-img" alt="Prato Shawarma Frango">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
                         <h3 class="card-title">Prato Shawarma Frango</h3>
                         <span class="card-price">R$ 45,00</span>
                     </div>
-                    <p class="card-desc">Porção generosa de frango marinado, verdes frescos, picles árabes, batata frita e molho de alho cremoso.</p>
+                    <p class="card-desc">Porção generosa de frango marinado especial, verdes frescos, picles árabes, batata frita, pão sírio e molho de alho cremoso.</p>
                     <button class="add-btn" onclick="addToCart(this, 'Prato Shawarma Frango', 45)">Adicionar ao Pedido</button>
                 </div>
             </div>
 
-            <!-- Card 11 -->
+            <!-- Card 10 -->
             <div class="card">
                 <div class="card-badge gold">Super Fartura</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/Kafka.jpg" class="card-img" alt="Prato Kafta Tradicional">
+                    <img src="Fotos/Sessão do Studio-031.jpg" class="card-img" alt="Prato Kafta Tradicional">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
                         <h3 class="card-title">Prato Kafta Tradicional</h3>
                         <span class="card-price">R$ 50,00</span>
                     </div>
-                    <p class="card-desc">Espetos de Kafta grelhada ao fogo com tomate, cebola, pão sírio e molho especial (sem vinagrete/sumagre).</p>
+                    <p class="card-desc">Espetos suculentos de Kafta grelhada ao fogo com tomate, cebola temperada, pão sírio fresco e creme de alho especial.</p>
                     <button class="add-btn" onclick="addToCart(this, 'Prato Kafta Tradicional', 50)">Adicionar ao Pedido</button>
+                </div>
+            </div>
+
+            <!-- Card 11 (NOVO ITEM) -->
+            <div class="card">
+                <div class="card-badge gold">Especialidade Árabe</div>
+                <div class="card-img-wrapper">
+                    <img src="Fotos/Kibe Cru.jpg" class="card-img" alt="Kibe Cru Tradicional">
+                </div>
+                <div class="card-content">
+                    <div class="card-header-info">
+                        <h3 class="card-title">Kibe Cru Tradicional</h3>
+                        <span class="card-price">R$ 35,00</span>
+                    </div>
+                    <p class="card-desc">Kibe cru artesanal finamente temperado com especiarias sírias, azeite de oliva extravirgem, hortelã fresca e cebola roxa. Acompanha pão sírio.</p>
+                    <button class="add-btn" onclick="addToCart(this, 'Kibe Cru Tradicional', 35)">Adicionar ao Pedido</button>
                 </div>
             </div>
         </div>
@@ -1159,7 +1153,7 @@
                         <h3 class="card-title">Homus (250g)</h3>
                         <span class="card-price">R$ 30,00</span>
                     </div>
-                    <p class="card-desc">Homus - pasta pura e aveludada de grão-de-bico artesanal selecionado (porção de 250g).</p>
+                    <p class="card-desc">Homus - pasta pura e aveludada de grão-de-bico artesanal selecionado (porção de 250g acompanhada de pão sírio).</p>
                     <button class="add-btn" onclick="addToCart(this, 'Homus (250g)', 30)">Adicionar ao Pedido</button>
                 </div>
             </div>
@@ -1174,7 +1168,7 @@
                         <h3 class="card-title">Babaghanoush (250g)</h3>
                         <span class="card-price">R$ 35,00</span>
                     </div>
-                    <p class="card-desc">Pasta tradicional de beringela defumada na brasa com molho de tahine (porção de 250g).</p>
+                    <p class="card-desc">Pasta tradicional de berinjela defumada na brasa com molho de tahine (porção de 250g acompanhada de pão sírio).</p>
                     <button class="add-btn" onclick="addToCart(this, 'Babaghanoush (250g)', 35)">Adicionar ao Pedido</button>
                 </div>
             </div>
@@ -1186,11 +1180,11 @@
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
-                        <h3 class="card-title">Labneh Coalhada (250g)</h3>
+                        <h3 class="card-title">Labneh Coalhada Seca (250g)</h3>
                         <span class="card-price">R$ 30,00</span>
                     </div>
-                    <p class="card-desc">Coalhada seca artesanal extremamente cremosa, porção de 250g servida do lado seco.</p>
-                    <button class="add-btn" onclick="addToCart(this, 'Labneh Coalhada (250g)', 30)">Adicionar ao Pedido</button>
+                    <p class="card-desc">Coalhada seca artesanal extremamente cremosa, porção de 250g servida com azeite extravirgem e pão sírio.</p>
+                    <button class="add-btn" onclick="addToCart(this, 'Labneh Coalhada Seca (250g)', 30)">Adicionar ao Pedido</button>
                 </div>
             </div>
 
@@ -1230,15 +1224,15 @@
             <div class="card">
                 <div class="card-badge green">Porção Mini</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/kibe pequeno.jpg" class="card-img" alt="Mini Kibes Fritos">
+                    <img src="Fotos/Sessão do Studio-046.jpg" class="card-img" alt="Mini Kibes Fritos">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
                         <h3 class="card-title">Mini Kibes Fritos</h3>
-                        <span class="card-price">R$ 5,00</span>
+                        <span class="card-price">R$ 6,00</span>
                     </div>
-                    <p class="card-desc">Porção de mini kibes fritos crocantes e saborosos, perfeitos para petiscar.</p>
-                    <button class="add-btn" onclick="addToCart(this, 'Mini Kibes Fritos', 5)">Adicionar ao Pedido</button>
+                    <p class="card-desc">Porção de mini kibes fritos artesanais, crocantes por fora e suculentos por dentro. Acompanha pasta de alho.</p>
+                    <button class="add-btn" onclick="addToCart(this, 'Mini Kibes Fritos', 6)">Adicionar ao Pedido</button>
                 </div>
             </div>
 
@@ -1246,15 +1240,15 @@
             <div class="card">
                 <div class="card-badge gold">Tradicional</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/Esfirra.jpg" class="card-img" alt="Porção de Esfirras">
+                    <img src="Fotos/Sessão do Studio-186.jpg" class="card-img" alt="Esfiha de Carne Tradicional">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
-                        <h3 class="card-title">Porção de Esfirras Especiais</h3>
-                        <span class="card-price">R$ 24,00</span>
+                        <h3 class="card-title">Esfiha de Carne Tradicional (Unidade)</h3>
+                        <span class="card-price">R$ 8,00</span>
                     </div>
-                    <p class="card-desc">Esfirras artesanais com massa macia, assadas no forno com recheio temperado de carne ou queijo.</p>
-                    <button class="add-btn" onclick="addToCart(this, 'Porção de Esfirras Especiais', 24)">Adicionar ao Pedido</button>
+                    <p class="card-desc">Esfiha artesanal assada no forno com massa macia e recheio farto de carne moída com especiarias árabes.</p>
+                    <button class="add-btn" onclick="addToCart(this, 'Esfiha de Carne Tradicional', 8)">Adicionar ao Pedido</button>
                 </div>
             </div>
         </div>
@@ -1272,60 +1266,138 @@
                 <div class="card">
                     <div class="card-badge gold">Artesanal</div>
                     <div class="card-img-wrapper">
-                        <img src="Fotos/Sessão do Studio-234.jpg" class="card-img" alt="Baklava Tradicional">
+                        <img src="Fotos/Sessão do Studio-234.jpg" class="card-img" alt="Baklava Folhado de Nozes">
                     </div>
                     <div class="card-content">
                         <div class="card-header-info">
-                            <h3 class="card-title">Baklava Tradicional</h3>
-                            <span class="card-price">R$ 18,00</span>
+                            <h3 class="card-title">Baklava Folhado de Nozes</h3>
+                            <span class="card-price">R$ 15,00</span>
                         </div>
-                        <p class="card-desc">Massa folhada mil-folhas super crocante recheada com nozes, pistache moído e calda aromática de flor de laranjeira.</p>
-                        <button class="add-btn" onclick="addToCart(this, 'Baklava Tradicional', 18)">Adicionar Sobremesa</button>
+                        <p class="card-desc">Massa folhada mil-folhas super crocante recheada com nozes nobres, pistache e calda aromática de flor de laranjeira.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Baklava Folhado de Nozes', 15)">Adicionar Sobremesa</button>
                     </div>
                 </div>
 
                 <!-- Sweet 2 -->
                 <div class="card">
+                    <div class="card-badge green">Pistache Nobre</div>
                     <div class="card-img-wrapper">
-                        <img src="Fotos/Sessão do Studio-247.jpg" class="card-img" alt="Ninhos Variados Árabes">
+                        <img src="Fotos/Ninho Pistache.jpg" class="card-img" alt="Ninho de Pistache">
                     </div>
                     <div class="card-content">
                         <div class="card-header-info">
-                            <h3 class="card-title">Ninhos Variados (Nozes/Castanha)</h3>
-                            <span class="card-price">R$ 16,00</span>
+                            <h3 class="card-title">Ninho de Pistache</h3>
+                            <span class="card-price">R$ 12,00</span>
                         </div>
-                        <p class="card-desc">Ninhos finos de massa folhada recheados com castanhas, nozes tostadas e pistache refinado.</p>
-                        <button class="add-btn" onclick="addToCart(this, 'Ninhos Variados', 16)">Adicionar Sobremesa</button>
+                        <p class="card-desc">Delicado ninho de massa folhada árabe crocante recheado com pistaches selecionados e calda aromática.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Ninho de Pistache', 12)">Adicionar Sobremesa</button>
                     </div>
                 </div>
 
                 <!-- Sweet 3 -->
                 <div class="card">
                     <div class="card-img-wrapper">
-                        <img src="Fotos/Sessão do Studio-259.jpg" class="card-img" alt="Ninho Doce Árabe Knafeh">
+                        <img src="Fotos/Sessão do Studio-261.jpg" class="card-img" alt="Ninho de Damasco">
                     </div>
                     <div class="card-content">
                         <div class="card-header-info">
-                            <h3 class="card-title">Ninho Doce Árabe (Knafeh)</h3>
-                            <span class="card-price">R$ 18,00</span>
+                            <h3 class="card-title">Ninho de Damasco</h3>
+                            <span class="card-price">R$ 12,00</span>
                         </div>
-                        <p class="card-desc">Doce folhado especial com recheio cremoso e generosa cobertura de pistaches selecionados.</p>
-                        <button class="add-btn" onclick="addToCart(this, 'Ninho Doce Árabe', 18)">Adicionar Sobremesa</button>
+                        <p class="card-desc">Ninho fino de massa folhada dourada e crocante recheado com puro damasco turco e calda especial.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Ninho de Damasco', 12)">Adicionar Sobremesa</button>
                     </div>
                 </div>
 
                 <!-- Sweet 4 -->
                 <div class="card">
                     <div class="card-img-wrapper">
-                        <img src="Fotos/Ma'amoul.jpg" class="card-img" alt="Maamoul de Tâmara">
+                        <img src="Fotos/Sessão do Studio-258.jpg" class="card-img" alt="Ninho de Castanha de Caju">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header-info">
+                            <h3 class="card-title">Ninho de Castanha de Caju</h3>
+                            <span class="card-price">R$ 12,00</span>
+                        </div>
+                        <p class="card-desc">Ninho folhado crocante artesanal recheado com castanhas de caju tostadas e calda aromática.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Ninho de Castanha de Caju', 12)">Adicionar Sobremesa</button>
+                    </div>
+                </div>
+
+                <!-- Sweet 5 -->
+                <div class="card">
+                    <div class="card-img-wrapper">
+                        <img src="Fotos/Sessão do Studio-266.jpg" class="card-img" alt="Ninho de Nozes">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header-info">
+                            <h3 class="card-title">Ninho de Nozes</h3>
+                            <span class="card-price">R$ 12,00</span>
+                        </div>
+                        <p class="card-desc">Ninho árabe folhado crocante com generoso recheio de nozes nobres selecionadas.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Ninho de Nozes', 12)">Adicionar Sobremesa</button>
+                    </div>
+                </div>
+
+                <!-- Sweet 6 -->
+                <div class="card">
+                    <div class="card-img-wrapper">
+                        <img src="Fotos/Sessão do Studio-276.jpg" class="card-img" alt="Ma'amoul de Nozes">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header-info">
+                            <h3 class="card-title">Ma'amoul de Nozes</h3>
+                            <span class="card-price">R$ 10,00</span>
+                        </div>
+                        <p class="card-desc">Biscoito amanteigado refinado que derrete na boca, recheado com nozes moídas e toque de flor de laranjeira.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Ma\'amoul de Nozes', 10)">Adicionar Sobremesa</button>
+                    </div>
+                </div>
+
+                <!-- Sweet 7 -->
+                <div class="card">
+                    <div class="card-img-wrapper">
+                        <img src="Fotos/Sessão do Studio-276.jpg" class="card-img" alt="Ma'amoul de Tâmara">
                     </div>
                     <div class="card-content">
                         <div class="card-header-info">
                             <h3 class="card-title">Ma'amoul de Tâmara</h3>
-                            <span class="card-price">R$ 12,00</span>
+                            <span class="card-price">R$ 10,00</span>
                         </div>
                         <p class="card-desc">Biscoito amanteigado refinado recheado com pasta natural de tâmaras secas do Oriente Médio.</p>
-                        <button class="add-btn" onclick="addToCart(this, 'Ma\'amoul de Tâmara', 12)">Adicionar Sobremesa</button>
+                        <button class="add-btn" onclick="addToCart(this, 'Ma\'amoul de Tâmara', 10)">Adicionar Sobremesa</button>
+                    </div>
+                </div>
+
+                <!-- Sweet 8 (NOVO ITEM) -->
+                <div class="card">
+                    <div class="card-badge green">Mix 6 Unidades</div>
+                    <div class="card-img-wrapper">
+                        <img src="Fotos/Sessão do Studio-222.jpg" class="card-img" alt="Caixa Mix Doce Árabe 6 unidades">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header-info">
+                            <h3 class="card-title">Caixa Mix Doce Árabe (6 un)</h3>
+                            <span class="card-price">R$ 16,00</span>
+                        </div>
+                        <p class="card-desc">Caixa especial com 6 unidades sortidas dos melhores doces artesanais árabes: folhados, ninhos e maamouls selecionados.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Caixa Mix Doce Árabe (6 un)', 16)">Adicionar Sobremesa</button>
+                    </div>
+                </div>
+
+                <!-- Sweet 9 (NOVO ITEM) -->
+                <div class="card">
+                    <div class="card-badge gold">Mix Especial 12 Unidades</div>
+                    <div class="card-img-wrapper">
+                        <img src="Fotos/Sessão do Studio-216.jpg" class="card-img" alt="Caixa Mix Doce Árabe 12 unidades">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-header-info">
+                            <h3 class="card-title">Caixa Mix Doce Árabe (12 un)</h3>
+                            <span class="card-price">R$ 30,00</span>
+                        </div>
+                        <p class="card-desc">Caixa completa e presenteável com 12 unidades sortidas dos mais nobres doces árabes tradicionais.</p>
+                        <button class="add-btn" onclick="addToCart(this, 'Caixa Mix Doce Árabe (12 un)', 30)">Adicionar Sobremesa</button>
                     </div>
                 </div>
             </div>
