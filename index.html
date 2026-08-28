@@ -567,26 +567,135 @@
 
         .cart-items-list {
             margin-bottom: 20px;
-            max-height: 220px;
+            max-height: 290px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cart-items-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .cart-items-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 186, 8, 0.3);
+            border-radius: 4px;
         }
 
         .cart-item-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            flex-direction: column;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            transition: border-color 0.2s;
         }
 
-        .cart-item-info { display: flex; flex-direction: column; }
-        .cart-item-name { font-weight: 700; font-size: 0.95rem; }
-        .cart-item-price { color: var(--gold); font-weight: 800; }
+        .cart-item-row:hover {
+            border-color: rgba(255, 186, 8, 0.25);
+        }
+
+        .cart-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .cart-item-info { display: flex; flex-direction: column; gap: 2px; }
+        .cart-item-name { font-weight: 700; font-size: 0.95rem; color: #FFF; }
+        .cart-item-price { color: var(--gold); font-weight: 800; font-size: 0.9rem; }
         
         .remove-item-btn {
-            background: none; border: none; color: var(--brimo-red);
-            cursor: pointer; font-size: 0.85rem; font-weight: 700; margin-left: 10px;
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            color: #ff7b89;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .remove-item-btn:hover {
+            background: var(--brimo-red);
+            color: #FFF;
+        }
+
+        .cart-item-customization {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #AAA;
+            margin-bottom: 6px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .ingredient-chips-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .ing-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            border: 1px solid transparent;
+            font-family: inherit;
+            touch-action: manipulation;
+        }
+
+        .ing-chip.active {
+            background: rgba(40, 167, 69, 0.15);
+            border-color: rgba(40, 167, 69, 0.4);
+            color: #75e093;
+        }
+        .ing-chip.active:hover {
+            background: rgba(40, 167, 69, 0.3);
+        }
+
+        .ing-chip.removed {
+            background: rgba(230, 57, 70, 0.2);
+            border-color: #e63946;
+            color: #ff9999;
+            text-decoration: line-through;
+        }
+        .ing-chip.removed:hover {
+            background: rgba(230, 57, 70, 0.35);
+        }
+
+        .chip-status-icon {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-decoration: none !important;
+            display: inline-block;
+        }
+
+        .removed-badge-alert {
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: #ff9999;
+            background: rgba(230, 57, 70, 0.12);
+            border-left: 3px solid #e63946;
+            padding: 4px 8px;
+            border-radius: 4px;
+            line-height: 1.3;
         }
 
         .cart-summary-box {
@@ -736,6 +845,102 @@
             background: rgba(255, 186, 8, 0.15);
             border: 1px solid var(--gold);
             color: var(--gold);
+        }
+
+        /* AUTO-DETECÇÃO DE LOCALIZAÇÃO / IP ESTILO AMAZON */
+        .geo-detect-box {
+            margin-bottom: 12px;
+        }
+
+        .btn-geo-detect {
+            width: 100%;
+            background: rgba(51, 204, 255, 0.1);
+            border: 1px dashed #33CCFF;
+            color: #33CCFF;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-geo-detect:hover {
+            background: rgba(51, 204, 255, 0.25);
+            transform: scale(1.01);
+        }
+
+        .geo-confirm-card {
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.2), rgba(255, 186, 8, 0.15));
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .geo-confirm-title {
+            font-weight: 800;
+            color: var(--gold);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .geo-confirm-address {
+            font-size: 0.88rem;
+            color: #EEE;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 8px 10px;
+            border-radius: 6px;
+        }
+
+        .geo-confirm-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-geo-yes {
+            flex: 1;
+            background: #2ecc71;
+            border: none;
+            color: #000;
+            font-weight: 800;
+            padding: 9px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .btn-geo-yes:hover {
+            background: #27ae60;
+            color: #FFF;
+        }
+
+        .btn-geo-no {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #AAA;
+            font-weight: 700;
+            padding: 9px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .btn-geo-no:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #FFF;
         }
 
         .waze-btn {
@@ -1216,15 +1421,15 @@
             <div class="card">
                 <div class="card-badge gold">Tradicional</div>
                 <div class="card-img-wrapper">
-                    <img src="Fotos/Prato Kafta.jpg" class="card-img" alt="Prato Kafta Tradicional">
+                    <img src="Fotos/Sessão do Studio-031.jpg" class="card-img" alt="Prato Kafta Tradicional">
                 </div>
                 <div class="card-content">
                     <div class="card-header-info">
                         <h3 class="card-title">Prato Kafta Tradicional</h3>
-                        <span class="card-price">R$ 50,00</span>
+                        <span class="card-price">R$ 20,00</span>
                     </div>
-                    <p class="card-desc">Kafta suculenta grelhada ao fogo servida no prato com tomate fresco, alface, cebola temperada e creme de alho especial.</p>
-                    <button class="add-btn" onclick="addToCart(this, 'Prato Kafta Tradicional', 50)">Adicionar ao Pedido</button>
+                    <p class="card-desc">Kafta suculenta servida no prato com tomate fresco, cebola temperada, creme de alho especial e molho tahine.</p>
+                    <button class="add-btn" onclick="addToCart(this, 'Prato Kafta Tradicional', 20)">Adicionar ao Pedido</button>
                 </div>
             </div>
 
@@ -1559,8 +1764,25 @@
                         </label>
                     </div>
 
-                    <!-- Campos Se Entrega com Validação de Endereço Real -->
+                    <!-- Campos Se Entrega com Validação de Endereço Real & Auto-detecção -->
                     <div class="form-box" id="form-entrega">
+                        <!-- Auto-detecção Estilo Amazon -->
+                        <div class="geo-detect-box">
+                            <button type="button" class="btn-geo-detect" id="btn-detect-loc" onclick="detectCurrentLocation()">
+                                📍 Usar Minha Localização Atual (1 Clique)
+                            </button>
+                        </div>
+
+                        <!-- Card de Confirmação "Você está neste endereço?" -->
+                        <div class="geo-confirm-card" id="geo-confirm-card" style="display: none;">
+                            <div class="geo-confirm-title">📍 Você está neste endereço?</div>
+                            <div class="geo-confirm-address" id="geo-detected-text">Localizando seu endereço...</div>
+                            <div class="geo-confirm-actions">
+                                <button type="button" class="btn-geo-yes" onclick="applyDetectedAddress()">✓ Sim, usar este endereço</button>
+                                <button type="button" class="btn-geo-no" onclick="dismissDetectedAddress()">Digitar outro</button>
+                            </div>
+                        </div>
+
                         <input type="text" id="cust-name" class="form-input" placeholder="Seu Nome Completo *">
                         
                         <div class="cep-group">
@@ -1740,6 +1962,65 @@
             }
         }
 
+        /* === TABELA DE INGREDIENTES PARA PERSONALIZAÇÃO COM 1 TOQUE === */
+        const MENU_INGREDIENTS = {
+            'Shawarma de Carne': ['Carne', 'Tomate', 'Cebola', 'Salsinha', 'Molho Tahine', 'Pasta de Alho'],
+            'Shawarma de Frango': ['Frango', 'Batata Frita', 'Pasta de Alho', 'Alface'],
+            'Shawarma Misto': ['Carne', 'Frango', 'Tomate', 'Cebola', 'Alface', 'Batata Frita', 'Pasta de Alho'],
+            'Shawerma de Kafta': ['Kafta', 'Tomate', 'Cebola', 'Salsinha', 'Creme de Alho', 'Molho Tahine'],
+            'Shawarma de Kafta': ['Kafta', 'Tomate', 'Cebola', 'Salsinha', 'Creme de Alho', 'Molho Tahine'],
+            'Shawerma de Falafel Vegetariano': ['Falafel', 'Tomate', 'Alface', 'Salsinha', 'Hortelã', 'Rabanete', 'Picles', 'Molho Tahine'],
+            'Shawarma de Falafel Vegetariano': ['Falafel', 'Tomate', 'Alface', 'Salsinha', 'Hortelã', 'Rabanete', 'Picles', 'Molho Tahine'],
+            'Arayes de Carne': ['Carne Temperada', 'Pão Sírio'],
+            'Lanche de Batata Frita': ['Batata Frita', 'Creme de Alho', 'Picles', 'Salada'],
+            'Prato Shawarma Carne': ['Carne Shawarma', 'Verdes Frescos', 'Batata Frita', 'Pão Sírio', 'Pasta de Alho', 'Molho Tahine'],
+            'Prato Shawarma Frango': ['Frango Marinado', 'Verdes Frescos', 'Picles Árabes', 'Batata Frita', 'Pão Sírio', 'Molho de Alho'],
+            'Prato Shawarma Misto': ['Carne', 'Frango', 'Batata Frita', 'Pão Sírio', 'Pasta de Alho', 'Cebola Temperada', 'Molho Tahine'],
+            'Prato Kafta Tradicional': ['Kafta', 'Tomate Fresco', 'Cebola Temperada', 'Creme de Alho', 'Molho Tahine'],
+            'Kibe Cru Tradicional': ['Kibe Cru', 'Hortelã Fresca', 'Cebola Roxa', 'Azeite de Oliva', 'Pão Sírio'],
+            'Homus (250g)': ['Homus Artesanal', 'Pão Sírio', 'Azeite'],
+            'Babaghanoush (250g)': ['Berinjela Defumada', 'Pão Sírio', 'Molho Tahine', 'Azeite'],
+            'Labneh Coalhada Seca (250g)': ['Coalhada Seca', 'Pão Sírio', 'Azeite'],
+            'Porção Falafel Especial': ['6 Falafels', 'Verdes Frescos', 'Picles', 'Homus', 'Molho Tahine'],
+            'Kibe Frito Grande': ['Carne Moída Temperada'],
+            'Mini Kibe Frito': ['Pasta de Alho'],
+            'Esfiha de Carne Tradicional': ['Carne Moída com Especiarias'],
+            'Esfiha de Carne Tradicional (Unidade)': ['Carne Moída com Especiarias']
+        };
+
+        function getItemIngredients(itemName) {
+            if (!itemName) return [];
+            const cleanName = itemName.replace(/\s*\([^)]*\)/g, '').trim();
+            if (MENU_INGREDIENTS[cleanName]) return MENU_INGREDIENTS[cleanName];
+            if (MENU_INGREDIENTS[itemName]) return MENU_INGREDIENTS[itemName];
+            for (const key in MENU_INGREDIENTS) {
+                if (cleanName.toLowerCase() === key.toLowerCase() || 
+                    cleanName.toLowerCase().replace('shawerma', 'shawarma') === key.toLowerCase().replace('shawerma', 'shawarma')) {
+                    return MENU_INGREDIENTS[key];
+                }
+            }
+            return [];
+        }
+
+        function toggleIngredient(itemId, ingredient) {
+            const item = cart.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (!item.removedIngredients) {
+                item.removedIngredients = [];
+            }
+
+            const idx = item.removedIngredients.indexOf(ingredient);
+            if (idx > -1) {
+                item.removedIngredients.splice(idx, 1);
+            } else {
+                item.removedIngredients.push(ingredient);
+            }
+
+            saveCart();
+            renderCartItems();
+        }
+
         /* === 5. ADICIONAR ITEM AO CARRINHO === */
         function addToCart(btnElement, itemName, basePrice, checkboxId = null) {
             let finalPrice = basePrice;
@@ -1753,7 +2034,12 @@
                 }
             }
 
-            cart.push({ id: Date.now(), name: finalName, price: finalPrice });
+            cart.push({ 
+                id: Date.now() + Math.floor(Math.random() * 1000), 
+                name: finalName, 
+                price: finalPrice,
+                removedIngredients: []
+            });
             saveCart();
 
             // Feedback visual no botão
@@ -1766,7 +2052,12 @@
         }
 
         function addSauceExtra(sauceName, price) {
-            cart.push({ id: Date.now(), name: sauceName, price: price });
+            cart.push({ 
+                id: Date.now() + Math.floor(Math.random() * 1000), 
+                name: sauceName, 
+                price: price,
+                removedIngredients: []
+            });
             saveCart();
             openModal();
         }
@@ -1774,7 +2065,7 @@
         function removeFromCart(itemId) {
             cart = cart.filter(item => item.id !== itemId);
             saveCart();
-            openModal();
+            renderCartItems();
         }
 
         /* === 6. ATUALIZAR UI DO CARRINHO === */
@@ -1819,9 +2110,9 @@
             if (totalModalSpan) totalModalSpan.innerText = total.toFixed(2).replace('.', ',');
         }
 
-        function openModal() {
-            const modal = document.getElementById('checkout-modal');
+        function renderCartItems() {
             const itemsContainer = document.getElementById('cart-items-list');
+            if (!itemsContainer) return;
 
             itemsContainer.innerHTML = '';
 
@@ -1829,21 +2120,61 @@
                 itemsContainer.innerHTML = '<p style="color:#888; text-align:center; padding:20px;">Seu carrinho está vazio.</p>';
             } else {
                 cart.forEach(item => {
+                    item.removedIngredients = item.removedIngredients || [];
+                    const ingredients = getItemIngredients(item.name);
+
                     const row = document.createElement('div');
                     row.className = 'cart-item-row';
+
+                    let customizationHTML = '';
+                    if (ingredients && ingredients.length > 0) {
+                        const chipsHTML = ingredients.map(ing => {
+                            const isRemoved = item.removedIngredients.includes(ing);
+                            return `
+                                <button type="button" 
+                                        class="ing-chip ${isRemoved ? 'removed' : 'active'}" 
+                                        onclick="toggleIngredient(${item.id}, '${ing}')"
+                                        title="${isRemoved ? 'Clique para incluir novamente' : 'Clique para retirar do prato'}">
+                                    <span class="chip-status-icon">${isRemoved ? '✕ Sem' : '✓'}</span> ${ing}
+                                </button>
+                            `;
+                        }).join('');
+
+                        const alertHTML = item.removedIngredients.length > 0 
+                            ? `<div class="removed-badge-alert">⚠️ <strong>Retirado do prato:</strong> Sem ${item.removedIngredients.join(', ')}</div>` 
+                            : '';
+
+                        customizationHTML = `
+                            <div class="cart-item-customization">
+                                <span class="custom-label">Toque para retirar do seu prato:</span>
+                                <div class="ingredient-chips-list">
+                                    ${chipsHTML}
+                                </div>
+                                ${alertHTML}
+                            </div>
+                        `;
+                    }
+
                     row.innerHTML = `
-                        <div class="cart-item-info">
-                            <span class="cart-item-name">1x ${item.name}</span>
-                            <span class="cart-item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                        <div class="cart-item-top">
+                            <div class="cart-item-info">
+                                <span class="cart-item-name">1x ${item.name}</span>
+                                <span class="cart-item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                            <button class="remove-item-btn" onclick="removeFromCart(${item.id})">Remover ✕</button>
                         </div>
-                        <button class="remove-item-btn" onclick="removeFromCart(${item.id})">Remover ✕</button>
+                        ${customizationHTML}
                     `;
                     itemsContainer.appendChild(row);
                 });
             }
 
             updateModalTotals();
-            modal.classList.add('active');
+        }
+
+        function openModal() {
+            renderCartItems();
+            document.getElementById('checkout-modal').classList.add('active');
         }
 
         function closeModal() {
@@ -1870,7 +2201,143 @@
             updateModalTotals();
         }
 
-        /* === 8. MÁSCARA E BUSCA AUTOMÁTICA DE CEP (VIACEP) === */
+        /* === 8. DETECÇÃO DE LOCALIZAÇÃO / IP ESTILO AMAZON === */
+        let detectedAddressData = null;
+
+        async function detectCurrentLocation() {
+            const btn = document.getElementById('btn-detect-loc');
+            const confirmCard = document.getElementById('geo-confirm-card');
+            const detectedText = document.getElementById('geo-detected-text');
+            const statusDiv = document.getElementById('cep-status');
+
+            if (!btn || !confirmCard || !detectedText) return;
+
+            btn.innerText = "⏳ Obtendo sua localização...";
+            btn.style.opacity = "0.7";
+
+            // Tenta primeiro Geolocalização do Dispositivo (Alta Precisão via GPS)
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+
+                        try {
+                            // Reverse geocoding via OpenStreetMap Nominatim (gratuito e de alta precisão)
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`);
+                            const data = await res.json();
+
+                            if (data && data.address) {
+                                const addr = data.address;
+                                const street = addr.road || addr.street || addr.pedestrian || 'Sua Rua';
+                                const bairro = addr.suburb || addr.neighbourhood || addr.city_district || 'Seu Bairro';
+                                const city = addr.city || addr.town || addr.municipality || 'Pindamonhangaba';
+                                const state = addr.state_code || addr.state || 'SP';
+                                const cep = (addr.postcode || '').replace(/\D/g, '');
+
+                                detectedAddressData = {
+                                    street: street,
+                                    bairro: bairro,
+                                    city: `${city} - ${state}`,
+                                    cep: cep
+                                };
+
+                                detectedText.innerHTML = `<strong>${street}</strong>, ${bairro}<br><span style="color:#CCC;">${city} - ${state} ${cep ? `(CEP: ${cep.replace(/(\d{5})(\d{3})/, '$1-$2')})` : ''}</span>`;
+                                confirmCard.style.display = 'block';
+                                btn.innerText = "📍 Localização Detectada com Sucesso!";
+                                btn.style.opacity = "1";
+                                return;
+                            }
+                        } catch (e) {
+                            console.error("Erro no reverse geocoding:", e);
+                        }
+
+                        // Fallback se reverse geocoding falhar
+                        fallbackIPLocation();
+                    },
+                    (error) => {
+                        console.warn("Geolocalização não autorizada, usando detecção por IP:", error.message);
+                        fallbackIPLocation();
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            } else {
+                fallbackIPLocation();
+            }
+        }
+
+        async function fallbackIPLocation() {
+            const btn = document.getElementById('btn-detect-loc');
+            const confirmCard = document.getElementById('geo-confirm-card');
+            const detectedText = document.getElementById('geo-detected-text');
+
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+
+                if (data && data.city) {
+                    detectedAddressData = {
+                        street: '',
+                        bairro: '',
+                        city: `${data.city} - ${data.region_code || data.region || 'SP'}`,
+                        cep: (data.postal || '').replace(/\D/g, '')
+                    };
+
+                    detectedText.innerHTML = `<strong>Detectamos sua cidade:</strong> ${data.city} - ${data.region_code || data.region || 'SP'} ${data.postal ? `(CEP aprox: ${data.postal})` : ''}`;
+                    confirmCard.style.display = 'block';
+                    btn.innerText = "📍 Cidade Detectada!";
+                    btn.style.opacity = "1";
+                    return;
+                }
+            } catch (e) {
+                console.error("Erro na detecção por IP:", e);
+            }
+
+            btn.innerText = "📍 Usar Minha Localização Atual (1 Clique)";
+            btn.style.opacity = "1";
+            alert("Não foi possível detectar sua localização automaticamente. Por favor, preencha o CEP ou endereço abaixo.");
+        }
+
+        function applyDetectedAddress() {
+            if (!detectedAddressData) return;
+
+            const streetInput = document.getElementById('cust-street');
+            const bairroInput = document.getElementById('cust-bairro');
+            const cityInput = document.getElementById('cust-city');
+            const cepInput = document.getElementById('cust-cep');
+            const numInput = document.getElementById('cust-num');
+            const confirmCard = document.getElementById('geo-confirm-card');
+            const statusDiv = document.getElementById('cep-status');
+
+            if (detectedAddressData.street && streetInput) streetInput.value = detectedAddressData.street;
+            if (detectedAddressData.bairro && bairroInput) bairroInput.value = detectedAddressData.bairro;
+            if (detectedAddressData.city && cityInput) cityInput.value = detectedAddressData.city;
+            if (detectedAddressData.cep && cepInput) {
+                const c = detectedAddressData.cep;
+                cepInput.value = c.length === 8 ? `${c.substring(0,5)}-${c.substring(5)}` : c;
+            }
+
+            confirmCard.style.display = 'none';
+
+            if (statusDiv) {
+                statusDiv.className = 'address-status success';
+                statusDiv.innerHTML = `✓ <strong>Endereço Confirmado via Localização!</strong> Agora só informe o Número (Nº) da sua residência.`;
+            }
+
+            if (numInput) numInput.focus();
+        }
+
+        function dismissDetectedAddress() {
+            const confirmCard = document.getElementById('geo-confirm-card');
+            if (confirmCard) confirmCard.style.display = 'none';
+            const btn = document.getElementById('btn-detect-loc');
+            if (btn) {
+                btn.innerText = "📍 Usar Minha Localização Atual (1 Clique)";
+                btn.style.opacity = "1";
+            }
+        }
+
+        /* === 9. MÁSCARA E BUSCA AUTOMÁTICA DE CEP (VIACEP) === */
         function handleCEPInput(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.length > 8) value = value.substring(0, 8);
@@ -1941,7 +2408,7 @@
             }
         }
 
-        /* === 9. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDAÇÃO DE FRETE === */
+        /* === 10. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDAÇÃO DE FRETE === */
         function sendToWhatsApp() {
             if (cart.length === 0) {
                 alert("Adicione pelo menos um item ao seu carrinho antes de enviar o pedido.");
@@ -2001,7 +2468,10 @@
 
             msg += `\n*🛒 Itens do Pedido:*\n`;
             cart.forEach(item => {
-                msg += `• 1x ${item.name} — R$ ${item.price.toFixed(2).replace('.', ',')}\n`;
+                msg += `• 1x *${item.name}* — R$ ${item.price.toFixed(2).replace('.', ',')}\n`;
+                if (item.removedIngredients && item.removedIngredients.length > 0) {
+                    msg += `   └ 🚫 *SEM:* ${item.removedIngredients.join(', ')}\n`;
+                }
             });
 
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
