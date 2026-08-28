@@ -589,15 +589,33 @@
             cursor: pointer; font-size: 0.85rem; font-weight: 700; margin-left: 10px;
         }
 
+        .cart-summary-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .cart-summary-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #BBB;
+            margin-bottom: 8px;
+        }
+
         .cart-total-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 1.3rem;
             font-weight: 800;
-            padding: 15px 0;
-            border-top: 2px solid var(--brimo-orange);
-            margin-bottom: 20px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 186, 8, 0.3);
+            margin-top: 6px;
+            margin-bottom: 0;
         }
 
         .checkout-options { margin-bottom: 20px; }
@@ -1528,21 +1546,16 @@
                     <!-- Itens via JS -->
                 </div>
 
-                <div class="cart-total-bar">
-                    <span>Total do Pedido:</span>
-                    <span style="color: var(--gold);">R$ <span id="cart-total-modal">0,00</span></span>
-                </div>
-
                 <div class="checkout-options">
                     <label>Forma de Recebimento:</label>
                     <div class="radio-switch">
                         <label id="lbl-retirada" class="active" onclick="selectDeliveryMode('Retirar no Local')">
                             <input type="radio" name="delivery_mode" value="Retirar no Local" checked>
-                            <span>🛵 Retirar no Local</span>
+                            <span>🛵 Retirar no Local (Grátis)</span>
                         </label>
                         <label id="lbl-entrega" onclick="selectDeliveryMode('Entrega')">
                             <input type="radio" name="delivery_mode" value="Entrega">
-                            <span>🚀 Entrega em Domicílio</span>
+                            <span>🚀 Entrega (+ R$ 7,00)</span>
                         </label>
                     </div>
 
@@ -1579,6 +1592,21 @@
                         <a href="https://waze.com/ul?q=Rua%20Dona%20Carmelita%20Gama%2C%20385%2C%20Pindamonhangaba" target="_blank" class="waze-btn">
                             🚗 Abrir Rota no Waze
                         </a>
+                    </div>
+                </div>
+
+                <div class="cart-summary-box">
+                    <div class="cart-summary-line">
+                        <span>Subtotal dos Itens:</span>
+                        <span>R$ <span id="cart-subtotal-modal">0,00</span></span>
+                    </div>
+                    <div class="cart-summary-line" id="delivery-fee-line" style="display: none;">
+                        <span>🛵 Taxa de Entrega (Frete):</span>
+                        <span style="color: #33CCFF; font-weight: 700;">+ R$ 7,00</span>
+                    </div>
+                    <div class="cart-total-bar">
+                        <span>Total do Pedido:</span>
+                        <span style="color: var(--gold);">R$ <span id="cart-total-modal">0,00</span></span>
                     </div>
                 </div>
 
@@ -1766,11 +1794,34 @@
             totalBtnSpan.innerText = total.toFixed(2).replace('.', ',');
         }
 
-        /* === 7. MODAL DE CHECKOUT === */
+        /* === 7. MODAL DE CHECKOUT & CÁLCULO DE TOTAIS (COM FRETE DE R$ 7,00) === */
+        const DELIVERY_FEE = 7.00;
+
+        function updateModalTotals() {
+            const subtotalSpan = document.getElementById('cart-subtotal-modal');
+            const totalModalSpan = document.getElementById('cart-total-modal');
+            const deliveryLine = document.getElementById('delivery-fee-line');
+            const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
+
+            const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
+            let deliveryFee = 0;
+
+            if (isDelivery && cart.length > 0) {
+                deliveryFee = DELIVERY_FEE;
+                if (deliveryLine) deliveryLine.style.display = 'flex';
+            } else {
+                if (deliveryLine) deliveryLine.style.display = 'none';
+            }
+
+            const total = subtotal + deliveryFee;
+
+            if (subtotalSpan) subtotalSpan.innerText = subtotal.toFixed(2).replace('.', ',');
+            if (totalModalSpan) totalModalSpan.innerText = total.toFixed(2).replace('.', ',');
+        }
+
         function openModal() {
             const modal = document.getElementById('checkout-modal');
             const itemsContainer = document.getElementById('cart-items-list');
-            const totalModalSpan = document.getElementById('cart-total-modal');
 
             itemsContainer.innerHTML = '';
 
@@ -1791,8 +1842,7 @@
                 });
             }
 
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            totalModalSpan.innerText = total.toFixed(2).replace('.', ',');
+            updateModalTotals();
             modal.classList.add('active');
         }
 
@@ -1815,8 +1865,9 @@
                 lblRetirada.classList.add('active');
                 lblEntrega.classList.remove('active');
                 formRetirada.classList.add('active');
-                formRetirada.classList.remove('active');
+                formEntrega.classList.remove('active');
             }
+            updateModalTotals();
         }
 
         /* === 8. MÁSCARA E BUSCA AUTOMÁTICA DE CEP (VIACEP) === */
@@ -1890,7 +1941,7 @@
             }
         }
 
-        /* === 9. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDADO === */
+        /* === 9. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDAÇÃO DE FRETE === */
         function sendToWhatsApp() {
             if (cart.length === 0) {
                 alert("Adicione pelo menos um item ao seu carrinho antes de enviar o pedido.");
@@ -1953,8 +2004,17 @@
                 msg += `• 1x ${item.name} — R$ ${item.price.toFixed(2).replace('.', ',')}\n`;
             });
 
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            msg += `\n*💰 Valor Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
+
+            if (isDelivery) {
+                const total = subtotal + DELIVERY_FEE;
+                msg += `\n📦 *Subtotal dos Itens:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                msg += `🛵 *Taxa de Entrega (Frete):* R$ ${DELIVERY_FEE.toFixed(2).replace('.', ',')}\n`;
+                msg += `*💰 Valor Total a Pagar:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            } else {
+                msg += `\n*💰 Valor Total a Pagar:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            }
+
             msg += `\n_Pedido realizado via Site Brimo Comida Árabe_`;
 
             const encodedMsg = encodeURIComponent(msg);
