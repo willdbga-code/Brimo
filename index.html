@@ -1883,7 +1883,66 @@
         /* === 1. ESTADO & PERSISTÊNCIA NO LOCALSTORAGE === */
         let cart = JSON.parse(localStorage.getItem('brimo_cart')) || [];
 
+        const MENU_PRICES = {
+            'Shawarma de Carne': 30,
+            'Shawarma de Frango': 25,
+            'Shawarma Misto': 28,
+            'Shawerma de Kafta': 20,
+            'Shawarma de Kafta': 20,
+            'Shawerma de Falafel Vegetariano': 20,
+            'Shawarma de Falafel Vegetariano': 20,
+            'Arayes de Carne': 15,
+            'Lanche de Batata Frita': 20,
+            'Prato Shawarma Carne': 50,
+            'Prato Shawarma Frango': 45,
+            'Prato Shawarma Misto': 50,
+            'Prato Kafta Tradicional': 20,
+            'Kibe Cru Tradicional': 35,
+            'Homus (250g)': 30,
+            'Babaghanoush (250g)': 35,
+            'Labneh Coalhada Seca (250g)': 30,
+            'Porção Falafel Especial': 40,
+            'Kibe Frito Grande': 10,
+            'Mini Kibe Frito': 6,
+            'Esfiha de Carne Tradicional': 8,
+            'Esfiha de Carne Tradicional (Unidade)': 8,
+            'Molho de Alho Especial': 3,
+            'Baklava Folhado de Nozes': 15,
+            'Ninho de Pistache': 12,
+            'Ninho de Damasco': 12,
+            'Ninho de Castanha de Caju': 12,
+            'Ninho de Amêndoas': 12,
+            'Ninho de Nozes': 12,
+            'Ma\'amoul de Nozes': 10,
+            'Ma\'amoul de Tâmara': 10,
+            'Caixa Mix Doce Árabe (6 un)': 16,
+            'Caixa Mix Doce Árabe (12 un)': 30
+        };
+
+        function syncCartPrices() {
+            let changed = false;
+            cart.forEach(item => {
+                const isPaoFolha = item.name.includes('(no Pão Folha)');
+                const baseName = item.name.replace(/\s*\([^)]*\)/g, '').trim();
+                if (MENU_PRICES[baseName] !== undefined) {
+                    const expectedPrice = MENU_PRICES[baseName] + (isPaoFolha ? 10 : 0);
+                    if (item.price !== expectedPrice) {
+                        item.price = expectedPrice;
+                        changed = true;
+                    }
+                }
+                if (!item.removedIngredients) {
+                    item.removedIngredients = [];
+                    changed = true;
+                }
+            });
+            if (changed) {
+                localStorage.setItem('brimo_cart', JSON.stringify(cart));
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            syncCartPrices();
             updateCartUI();
             initSlider();
             initScrollRevealDeck();
