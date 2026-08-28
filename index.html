@@ -644,6 +644,80 @@
             color: var(--white);
             font-family: 'Montserrat', sans-serif;
             margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 186, 8, 0.3);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-input {
+            flex: 1;
+        }
+
+        .cep-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .cep-group .form-input {
+            margin-bottom: 0;
+        }
+
+        .cep-btn {
+            background: rgba(255, 186, 8, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+
+        .cep-btn:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .address-status {
+            font-size: 0.85rem;
+            margin-top: -6px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .address-status.success {
+            display: block;
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .address-status.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .address-status.loading {
+            display: block;
+            background: rgba(255, 186, 8, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
         }
 
         .waze-btn {
@@ -1472,10 +1546,28 @@
                         </label>
                     </div>
 
-                    <!-- Campos Se Entrega -->
+                    <!-- Campos Se Entrega com Validação de Endereço Real -->
                     <div class="form-box" id="form-entrega">
                         <input type="text" id="cust-name" class="form-input" placeholder="Seu Nome Completo *">
-                        <input type="text" id="cust-address" class="form-input" placeholder="Endereço de Entrega (Rua, Nº, Bairro) *">
+                        
+                        <div class="cep-group">
+                            <input type="text" id="cust-cep" class="form-input" placeholder="CEP (00000-000) *" maxlength="9" oninput="handleCEPInput(this)" onblur="searchCEP()">
+                            <button type="button" class="cep-btn" onclick="searchCEP()">🔍 Validar CEP</button>
+                        </div>
+                        <div id="cep-status" class="address-status"></div>
+
+                        <input type="text" id="cust-street" class="form-input" placeholder="Rua / Avenida *">
+                        
+                        <div class="form-row">
+                            <input type="text" id="cust-num" class="form-input" placeholder="Número (Nº) *" style="max-width: 130px;">
+                            <input type="text" id="cust-comp" class="form-input" placeholder="Complemento (Apto, Bloco)">
+                        </div>
+
+                        <div class="form-row">
+                            <input type="text" id="cust-bairro" class="form-input" placeholder="Bairro *">
+                            <input type="text" id="cust-city" class="form-input" placeholder="Cidade - UF *" value="Pindamonhangaba - SP">
+                        </div>
+
                         <input type="text" id="cust-ref" class="form-input" placeholder="Ponto de Referência (Opcional)">
                     </div>
 
@@ -1727,7 +1819,78 @@
             }
         }
 
-        /* === 8. ENVIO PARA O WHATSAPP === */
+        /* === 8. MÁSCARA E BUSCA AUTOMÁTICA DE CEP (VIACEP) === */
+        function handleCEPInput(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.substring(0, 8);
+            
+            // Aplica máscara 00000-000
+            if (value.length > 5) {
+                input.value = value.substring(0, 5) + '-' + value.substring(5);
+            } else {
+                input.value = value;
+            }
+
+            // Se completou 8 dígitos, busca automaticamente
+            if (value.length === 8) {
+                searchCEP();
+            }
+        }
+
+        async function searchCEP() {
+            const cepInput = document.getElementById('cust-cep');
+            const statusDiv = document.getElementById('cep-status');
+            const streetInput = document.getElementById('cust-street');
+            const bairroInput = document.getElementById('cust-bairro');
+            const cityInput = document.getElementById('cust-city');
+            const numInput = document.getElementById('cust-num');
+
+            if (!cepInput) return;
+            const cleanCep = cepInput.value.replace(/\D/g, '');
+
+            if (cleanCep.length !== 8) {
+                if (cleanCep.length > 0) {
+                    statusDiv.className = 'address-status error';
+                    statusDiv.innerHTML = '⚠️ CEP incompleto. Digite os 8 dígitos.';
+                } else {
+                    statusDiv.className = 'address-status';
+                    statusDiv.innerHTML = '';
+                }
+                return;
+            }
+
+            statusDiv.className = 'address-status loading';
+            statusDiv.innerHTML = '⏳ Consultando e validando CEP...';
+
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+                const data = await response.json();
+
+                if (data.erro) {
+                    statusDiv.className = 'address-status error';
+                    statusDiv.innerHTML = '❌ CEP não encontrado na base oficial dos Correios. Por favor, confira o número.';
+                    return;
+                }
+
+                // Preenchimento automático dos dados validados
+                if (data.logradouro) streetInput.value = data.logradouro;
+                if (data.bairro) bairroInput.value = data.bairro;
+                if (data.localidade && data.uf) cityInput.value = `${data.localidade} - ${data.uf}`;
+
+                statusDiv.className = 'address-status success';
+                statusDiv.innerHTML = `✓ <strong>Endereço Validado:</strong> ${data.logradouro || 'Rua localizada'}, ${data.bairro || ''} — ${data.localidade}/${data.uf}`;
+                
+                // Foca no campo de número
+                if (numInput && !numInput.value) {
+                    numInput.focus();
+                }
+            } catch (err) {
+                statusDiv.className = 'address-status error';
+                statusDiv.innerHTML = '⚠️ Não foi possível validar online. Por favor, confira os dados preenchidos.';
+            }
+        }
+
+        /* === 9. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDADO === */
         function sendToWhatsApp() {
             if (cart.length === 0) {
                 alert("Adicione pelo menos um item ao seu carrinho antes de enviar o pedido.");
@@ -1736,16 +1899,35 @@
 
             const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
             let customerName = "";
-            let customerAddress = "";
+            let customerCEP = "";
+            let customerStreet = "";
+            let customerNum = "";
+            let customerComp = "";
+            let customerBairro = "";
+            let customerCity = "";
             let customerRef = "";
 
             if (isDelivery) {
                 customerName = document.getElementById('cust-name').value.trim();
-                customerAddress = document.getElementById('cust-address').value.trim();
+                customerCEP = document.getElementById('cust-cep').value.trim();
+                customerStreet = document.getElementById('cust-street').value.trim();
+                customerNum = document.getElementById('cust-num').value.trim();
+                customerComp = document.getElementById('cust-comp').value.trim();
+                customerBairro = document.getElementById('cust-bairro').value.trim();
+                customerCity = document.getElementById('cust-city').value.trim();
                 customerRef = document.getElementById('cust-ref').value.trim();
 
-                if (!customerName || !customerAddress) {
-                    alert("Por favor, preencha o seu Nome e Endereço de Entrega.");
+                if (!customerName) {
+                    alert("Por favor, preencha o seu Nome Completo.");
+                    document.getElementById('cust-name').focus();
+                    return;
+                }
+
+                if (!customerStreet || !customerNum || !customerBairro) {
+                    alert("Por favor, informe a Rua, o Número (Nº) e o Bairro para a entrega.");
+                    if (!customerStreet) document.getElementById('cust-street').focus();
+                    else if (!customerNum) document.getElementById('cust-num').focus();
+                    else document.getElementById('cust-bairro').focus();
                     return;
                 }
             }
@@ -1754,9 +1936,14 @@
 
             if (isDelivery) {
                 msg += `👤 *Cliente:* ${customerName}\n`;
-                msg += `🛵 *Modo:* Entrega em Domicílio\n`;
-                msg += `📍 *Endereço:* ${customerAddress}\n`;
-                if (customerRef) msg += `📍 *Referência:* ${customerRef}\n`;
+                msg += `🛵 *Modo:* Entrega em Domicílio (Endereço Confirmado)\n`;
+                msg += `📍 *Endereço:* ${customerStreet}, Nº ${customerNum}`;
+                if (customerComp) msg += ` - ${customerComp}`;
+                msg += `\n`;
+                msg += `📍 *Bairro:* ${customerBairro} — ${customerCity}`;
+                if (customerCEP) msg += ` (CEP: ${customerCEP})`;
+                msg += `\n`;
+                if (customerRef) msg += `📍 *Ponto de Referência:* ${customerRef}\n`;
             } else {
                 msg += `🛵 *Modo:* Retirar no Local\n📍 *Unidade:* Rua Dona Carmelita Gama, 385 - São Benedito, Pindamonhangaba - SP\n`;
             }
