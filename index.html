@@ -2071,11 +2071,14 @@
                                     <div id="receipt-preview-box" class="receipt-preview-box" style="display: none;">
                                         <div class="receipt-file-info">
                                             <span class="receipt-icon">📄</span>
-                                            <span class="receipt-filename" id="receipt-filename">comprovante.jpg</span>
+                                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                <span class="receipt-filename" id="receipt-filename">comprovante.jpg</span>
+                                                <span class="receipt-status-text" id="receipt-status-text" style="font-size: 0.75rem; color: #FFBA08;">⏳ Enviando para a nuvem...</span>
+                                            </div>
                                         </div>
                                         <button type="button" class="btn-remove-receipt" onclick="removeReceiptFile()">✕</button>
                                     </div>
-                                    <p class="pix-receipt-tip">💡 <em>Você também pode enviar o print do comprovante diretamente na conversa do WhatsApp ao finalizar o pedido!</em></p>
+                                    <p class="pix-receipt-tip">💡 <em>Ao anexar, o link do comprovante será gerado e enviado automaticamente no seu WhatsApp!</em></p>
                                 </div>
                             </div>
                         </div>
@@ -2582,21 +2585,110 @@
             }
         }
 
-        function handleReceiptFile(input) {
+        let attachedReceiptUrl = "";
+        let isUploadingReceipt = false;
+
+        async function handleReceiptFile(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 attachedReceiptName = file.name;
+                attachedReceiptUrl = "";
+                
                 const previewBox = document.getElementById('receipt-preview-box');
                 const filenameSpan = document.getElementById('receipt-filename');
+                const statusSpan = document.getElementById('receipt-status-text');
+                
                 if (previewBox && filenameSpan) {
                     filenameSpan.innerText = file.name;
+                    if (statusSpan) {
+                        statusSpan.innerText = "⏳ Enviando comprovante para a nuvem...";
+                        statusSpan.style.color = "#FFBA08";
+                    }
                     previewBox.style.display = 'flex';
+                }
+
+                isUploadingReceipt = true;
+                try {
+                    const uploadedUrl = await uploadReceiptToCloud(file);
+                    if (uploadedUrl) {
+                        attachedReceiptUrl = uploadedUrl;
+                        if (statusSpan) {
+                            statusSpan.innerHTML = `✓ <a href="${uploadedUrl}" target="_blank" style="color:#75e093; text-decoration:underline; font-weight:700;">Comprovante Pronto na Nuvem (Ver)</a>`;
+                        }
+                    } else {
+                        if (statusSpan) {
+                            statusSpan.innerText = "✓ Anexado (enviar também no WhatsApp)";
+                            statusSpan.style.color = "#AAA";
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Upload falhou, fallback ativo:", e);
+                    if (statusSpan) {
+                        statusSpan.innerText = "✓ Anexado (enviar também no WhatsApp)";
+                        statusSpan.style.color = "#AAA";
+                    }
+                } finally {
+                    isUploadingReceipt = false;
                 }
             }
         }
 
+        async function uploadReceiptToCloud(file) {
+            // 1. Tenta freeimage.host
+            try {
+                const base64Data = await fileToBase64(file);
+                const cleanBase64 = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
+                
+                const formData = new FormData();
+                formData.append('key', '6d207e02198a847aa98d0a2a901485a5');
+                formData.append('source', cleanBase64);
+                formData.append('action', 'upload');
+                formData.append('format', 'json');
+
+                const res = await fetch('https://freeimage.host/api/1/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data && data.image && (data.image.url || data.image.display_url)) {
+                    return data.image.url || data.image.display_url;
+                }
+            } catch (err) {
+                console.warn("Erro no freeimage.host:", err);
+            }
+
+            // 2. Fallback para tmpfiles.org
+            try {
+                const tmpFormData = new FormData();
+                tmpFormData.append('file', file);
+                const tmpRes = await fetch('https://tmpfiles.org/api/v1/upload', {
+                    method: 'POST',
+                    body: tmpFormData
+                });
+                const tmpData = await tmpRes.json();
+                if (tmpData && tmpData.data && tmpData.data.url) {
+                    return tmpData.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+                }
+            } catch (err) {
+                console.warn("Erro no tmpfiles:", err);
+            }
+
+            return null;
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         function removeReceiptFile() {
             attachedReceiptName = "";
+            attachedReceiptUrl = "";
+            isUploadingReceipt = false;
             const input = document.getElementById('pix-receipt-file');
             const previewBox = document.getElementById('receipt-preview-box');
             if (input) input.value = "";
@@ -2811,10 +2903,25 @@
         }
 
         /* === 10. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDAÇÃO DE FRETE === */
-        function sendToWhatsApp() {
+        async function sendToWhatsApp() {
             if (cart.length === 0) {
                 alert("Adicione pelo menos um item ao seu carrinho antes de enviar o pedido.");
                 return;
+            }
+
+            const isPix = document.getElementById('lbl-pag-pix') && document.getElementById('lbl-pag-pix').classList.contains('active');
+
+            // Se o comprovante estiver sendo enviado para a nuvem no momento, aguarda brevemente
+            if (isPix && isUploadingReceipt) {
+                const btnFinish = document.querySelector('.btn-whatsapp-finish');
+                const origText = btnFinish ? btnFinish.innerText : "Enviar Pedido para o WhatsApp ➔";
+                if (btnFinish) btnFinish.innerText = "⏳ Gerando link do comprovante...";
+                let waitCount = 0;
+                while (isUploadingReceipt && waitCount < 25) {
+                    await new Promise(r => setTimeout(r, 200));
+                    waitCount++;
+                }
+                if (btnFinish) btnFinish.innerText = origText;
             }
 
             const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
@@ -2887,10 +2994,11 @@
                 msg += `\n*💰 Valor Total a Pagar:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
             }
 
-            const isPix = document.getElementById('lbl-pag-pix') && document.getElementById('lbl-pag-pix').classList.contains('active');
             if (isPix) {
                 msg += `\n💳 *Forma de Pagamento:* PIX (Chave CNPJ: 55.574.702/0001-70)\n`;
-                if (attachedReceiptName) {
+                if (attachedReceiptUrl) {
+                    msg += `📎 *Link do Comprovante:* ${attachedReceiptUrl}\n`;
+                } else if (attachedReceiptName) {
                     msg += `📎 *Comprovante do Pix:* Selecionado (${attachedReceiptName}) — enviado no WhatsApp\n`;
                 } else {
                     msg += `📎 *Comprovante do Pix:* Pagamento via Pix (Enviarei o comprovante a seguir)\n`;
