@@ -2003,7 +2003,68 @@
                         </div>
 
                         <div class="form-row">
-                            <input type="text" id="cust-bairro" class="form-input" placeholder="Bairro *">
+                            <input type="text" id="cust-bairro" class="form-input" placeholder="Bairro *" list="bairros-pinda-list" oninput="updateModalTotals()">
+                            <datalist id="bairros-pinda-list">
+                                <option value="Alto do Cardoso">
+                                <option value="Alto Tabaú">
+                                <option value="Anauá">
+                                <option value="Andrade">
+                                <option value="Araretama">
+                                <option value="Água Preta">
+                                <option value="Bela Vista">
+                                <option value="Bem Viver">
+                                <option value="Beta">
+                                <option value="Boa Vista">
+                                <option value="Bosque da Princesa">
+                                <option value="Campo Alegre">
+                                <option value="Campo Belo">
+                                <option value="Campos Maia">
+                                <option value="Campinas (Moreira César)">
+                                <option value="Carangola">
+                                <option value="Castolira">
+                                <option value="Centro">
+                                <option value="Chácara Galega">
+                                <option value="Cidade Jardim">
+                                <option value="Cidade Nova">
+                                <option value="Colonial Village">
+                                <option value="Crispim">
+                                <option value="Delta">
+                                <option value="Distrito Industrial">
+                                <option value="Feital">
+                                <option value="Flamboyant">
+                                <option value="Hospital 10 de Julho">
+                                <option value="Imperial">
+                                <option value="Jardim Cristina">
+                                <option value="Jardim Eloyna">
+                                <option value="Jardim Mariana">
+                                <option value="Jardim Princesa">
+                                <option value="Jardim Resende">
+                                <option value="Jardim Rosely">
+                                <option value="Lago Azul">
+                                <option value="Lessa">
+                                <option value="Maria Áurea">
+                                <option value="Mombaça">
+                                <option value="Moreira César">
+                                <option value="Morumbi">
+                                <option value="Ouro Verde">
+                                <option value="Parque das Nações">
+                                <option value="Parque das Palmeiras">
+                                <option value="Parque São Domingos">
+                                <option value="Quadra Coberta">
+                                <option value="Reserva dos Lagos">
+                                <option value="Santa Casa">
+                                <option value="Santa Cecília">
+                                <option value="Santa Luzia">
+                                <option value="Santana">
+                                <option value="São Benedito">
+                                <option value="Socorro">
+                                <option value="Village Paineiras">
+                                <option value="Vila Prado">
+                                <option value="Vila Rica">
+                                <option value="Vila São Paulo">
+                                <option value="Vila Verde">
+                                <option value="Vista Alegre">
+                            </datalist>
                             <input type="text" id="cust-city" class="form-input" placeholder="Cidade - UF *" value="Pindamonhangaba - SP">
                         </div>
 
@@ -2091,8 +2152,8 @@
                         <span>R$ <span id="cart-subtotal-modal">0,00</span></span>
                     </div>
                     <div class="cart-summary-line" id="delivery-fee-line" style="display: none;">
-                        <span>🛵 Taxa de Entrega (Frete):</span>
-                        <span style="color: #33CCFF; font-weight: 700;">+ R$ 7,00</span>
+                        <span id="delivery-fee-label">🛵 Taxa de Entrega (Frete):</span>
+                        <span id="delivery-fee-val" style="color: #33CCFF; font-weight: 700;">+ R$ 6,00</span>
                     </div>
                     <div class="cart-total-bar">
                         <span>Total do Pedido:</span>
@@ -2412,22 +2473,209 @@
             totalBtnSpan.innerText = total.toFixed(2).replace('.', ',');
         }
 
-        /* === 7. MODAL DE CHECKOUT & CÁLCULO DE TOTAIS (COM FRETE DE R$ 7,00) === */
-        const DELIVERY_FEE = 7.00;
+        /* === 7. TABELA DE FRETE DINÂMICO & CÁLCULO DE TOTAIS === */
+        const BRIMO_SEDE_COORDS = { lat: -22.932604, lon: -45.4559786 };
+
+        const DELIVERY_BAIRROS = {
+            // 0 a 2.0 km (Centro e Arredores - R$ 5,00 a R$ 7,00)
+            "santa casa": { preco: 5.00, km: 0.4 },
+            "santa luzia": { preco: 5.00, km: 0.5 },
+            "parque sao domingos": { preco: 6.00, km: 0.5 },
+            "sao domingos": { preco: 6.00, km: 0.5 },
+            "jardim rosely": { preco: 6.00, km: 0.5 },
+            "rosely": { preco: 6.00, km: 0.5 },
+            "sao benedito": { preco: 6.00, km: 0.5 },
+            "parque sao benedito": { preco: 6.00, km: 0.5 },
+            "centro": { preco: 6.00, km: 1.0 },
+            "alto tabau": { preco: 7.00, km: 1.1 },
+            "alto do tabau": { preco: 7.00, km: 1.1 },
+            "tabau": { preco: 7.00, km: 1.1 },
+            "jardim resende": { preco: 7.00, km: 1.1 },
+            "resende": { preco: 7.00, km: 1.1 },
+            "hospital 10 de julho": { preco: 6.00, km: 1.3 },
+            "10 de julho": { preco: 6.00, km: 1.3 },
+            "vila prado": { preco: 6.00, km: 1.4 },
+            "campo alegre": { preco: 6.00, km: 1.5 },
+            "campos maia": { preco: 6.00, km: 1.5 },
+            "jardim cristina": { preco: 6.00, km: 1.6 },
+            "cristina": { preco: 6.00, km: 1.6 },
+            "quadra coberta": { preco: 7.00, km: 1.6 },
+            "alto cardoso": { preco: 6.00, km: 1.6 },
+            "alto do cardoso": { preco: 6.00, km: 1.6 },
+            "campo belo": { preco: 8.00, km: 1.7 },
+            "chacara galega": { preco: 6.00, km: 1.7 },
+            "ouro verde": { preco: 6.00, km: 1.9 },
+            "crispim": { preco: 7.00, km: 2.0 },
+            "santa cecilia": { preco: 7.00, km: 2.1 },
+            
+            // 2.1 a 3.5 km (Zona Intermediária - R$ 6,00 a R$ 8,00)
+            "imperial": { preco: 6.00, km: 2.1 },
+            "parque imperial": { preco: 6.00, km: 2.1 },
+            "santana": { preco: 6.00, km: 2.2 },
+            "bosque da princesa": { preco: 7.00, km: 2.2 },
+            "bosque": { preco: 7.00, km: 2.2 },
+            "maria aurea": { preco: 6.00, km: 2.3 },
+            "carangola": { preco: 7.00, km: 2.5 },
+            "flamboyant": { preco: 8.00, km: 2.5 },
+            "parque residencial flamboyant": { preco: 8.00, km: 2.5 },
+            "bela vista": { preco: 6.00, km: 2.8 },
+            "anaua": { preco: 8.00, km: 2.8 },
+            "residencial anaua": { preco: 8.00, km: 2.8 },
+            "boa vista": { preco: 8.00, km: 2.8 },
+            "jardim mariana": { preco: 7.00, km: 2.9 },
+            "castolira": { preco: 8.00, km: 2.9 },
+            "parque das nacoes": { preco: 6.00, km: 2.9 },
+            "nacoes": { preco: 6.00, km: 2.9 },
+            "andrade": { preco: 7.00, km: 3.1 },
+            "lessa": { preco: 7.00, km: 3.2 },
+            "vila sao paulo": { preco: 8.00, km: 3.5 },
+            "sao paulo": { preco: 8.00, km: 3.5 },
+
+            // 3.6 a 5.5 km (Zona Média - R$ 6,00 a R$ 8,00)
+            "vila rica": { preco: 7.00, km: 3.6 },
+            "vila verde": { preco: 6.00, km: 3.8 },
+            "socorro": { preco: 6.00, km: 4.0 },
+            "colonial village": { preco: 8.00, km: 4.3 },
+            "morumbi": { preco: 8.00, km: 4.3 },
+            "jardim morumbi": { preco: 8.00, km: 4.3 },
+            "village paineiras": { preco: 8.00, km: 4.4 },
+            "paineiras": { preco: 8.00, km: 4.4 },
+            "delta": { preco: 8.00, km: 4.6 },
+            "residencial delta": { preco: 8.00, km: 4.6 },
+            "parque das palmeiras": { preco: 8.00, km: 4.9 },
+            "palmeiras": { preco: 8.00, km: 4.9 },
+            "reserva dos lagos": { preco: 8.00, km: 5.2 },
+            "beta": { preco: 8.00, km: 5.2 },
+            "residencial beta": { preco: 8.00, km: 5.2 },
+            "jardim princesa": { preco: 7.00, km: 5.4 },
+            "mombaca": { preco: 7.00, km: 5.5 },
+
+            // 5.6 a 7.5 km (Periferia e Distritos - R$ 7,00 a R$ 10,00)
+            "agua preta": { preco: 8.00, km: 5.6 },
+            "lago azul": { preco: 7.00, km: 5.9 },
+            "cidade jardim": { preco: 7.00, km: 5.9 },
+            "jardim eloyna": { preco: 9.00, km: 6.4 },
+            "eloyna": { preco: 9.00, km: 6.4 },
+            "araretama": { preco: 8.00, km: 6.6 },
+            "cidade nova": { preco: 10.00, km: 6.9 },
+            "bem viver": { preco: 10.00, km: 7.2 },
+            "distrito industrial": { preco: 9.00, km: 7.3 },
+
+            // Acima de 7.5 km (Extremos / Moreira César / Feital / Vista Alegre - R$ 13,00 a R$ 15,00)
+            "feital": { preco: 15.00, km: 7.9 },
+            "campinas": { preco: 13.00, km: 8.4 },
+            "vista alegre": { preco: 15.00, km: 8.5 },
+            "moreira cesar": { preco: 14.00, km: 9.0 },
+            "pasin": { preco: 14.00, km: 9.5 },
+            "mantiqueira": { preco: 12.00, km: 8.0 },
+            "triangulo": { preco: 12.00, km: 8.0 }
+        };
+
+        function normalizeText(text) {
+            return (text || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s]/g, '')
+                .trim();
+        }
+
+        let currentDeliveryFee = 6.00;
+        let currentDeliveryBairroName = "";
+        let currentDeliveryDistanceKm = 0;
+
+        function getDynamicDeliveryFee() {
+            const bairroInput = document.getElementById('cust-bairro');
+            const streetInput = document.getElementById('cust-street');
+            
+            const rawBairro = bairroInput ? bairroInput.value.trim() : '';
+            const rawStreet = streetInput ? streetInput.value.trim() : '';
+            
+            const normBairro = normalizeText(rawBairro);
+            const normStreet = normalizeText(rawStreet);
+
+            if (normBairro) {
+                if (DELIVERY_BAIRROS[normBairro]) {
+                    currentDeliveryFee = DELIVERY_BAIRROS[normBairro].preco;
+                    currentDeliveryBairroName = rawBairro;
+                    currentDeliveryDistanceKm = DELIVERY_BAIRROS[normBairro].km;
+                    return currentDeliveryFee;
+                }
+                
+                for (const [key, info] of Object.entries(DELIVERY_BAIRROS)) {
+                    if (normBairro === key || normBairro.includes(key) || key.includes(normBairro)) {
+                        currentDeliveryFee = info.preco;
+                        currentDeliveryBairroName = rawBairro;
+                        currentDeliveryDistanceKm = info.km;
+                        return currentDeliveryFee;
+                    }
+                }
+            }
+
+            if (detectedAddressData && detectedAddressData.lat && detectedAddressData.lon) {
+                const distReta = calculateDistance(BRIMO_SEDE_COORDS.lat, BRIMO_SEDE_COORDS.lon, detectedAddressData.lat, detectedAddressData.lon);
+                const distRua = Math.max(0.5, +(distReta * 1.32).toFixed(1));
+                currentDeliveryDistanceKm = distRua;
+                currentDeliveryFee = calculateFeeByKm(distRua);
+                currentDeliveryBairroName = rawBairro || "GPS";
+                return currentDeliveryFee;
+            }
+
+            // Padrão base inicial antes de digitar
+            currentDeliveryFee = 6.00;
+            currentDeliveryBairroName = rawBairro || "";
+            currentDeliveryDistanceKm = 0;
+            return currentDeliveryFee;
+        }
+
+        function calculateFeeByKm(km) {
+            if (km <= 2.0) return 6.00;
+            if (km <= 3.5) return 7.00;
+            if (km <= 5.0) return 8.00;
+            if (km <= 6.5) return 9.00;
+            if (km <= 8.0) return 10.00;
+            if (km <= 10.0) return 13.00;
+            return +(15.00 + (km - 10.0) * 1.50).toFixed(2);
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
         function updateModalTotals() {
             const subtotalSpan = document.getElementById('cart-subtotal-modal');
             const totalModalSpan = document.getElementById('cart-total-modal');
             const pixTotalSpan = document.getElementById('pix-total-val');
             const deliveryLine = document.getElementById('delivery-fee-line');
+            const deliveryLabel = document.getElementById('delivery-fee-label');
+            const deliveryVal = document.getElementById('delivery-fee-val');
             const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
 
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
             let deliveryFee = 0;
 
             if (isDelivery && cart.length > 0) {
-                deliveryFee = DELIVERY_FEE;
+                deliveryFee = getDynamicDeliveryFee();
                 if (deliveryLine) deliveryLine.style.display = 'flex';
+                
+                if (deliveryLabel) {
+                    if (currentDeliveryBairroName) {
+                        const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
+                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega (<strong>${currentDeliveryBairroName}</strong>${distStr}):`;
+                    } else {
+                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega (Frete):`;
+                    }
+                }
+                if (deliveryVal) {
+                    deliveryVal.innerText = `+ R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
+                }
             } else {
                 if (deliveryLine) deliveryLine.style.display = 'none';
             }
@@ -2818,6 +3066,8 @@
                 statusDiv.innerHTML = `✓ <strong>Endereço Confirmado via Localização!</strong> Agora só informe o Número (Nº) da sua residência.`;
             }
 
+            updateModalTotals();
+
             if (numInput) numInput.focus();
         }
 
@@ -2892,6 +3142,9 @@
                 statusDiv.className = 'address-status success';
                 statusDiv.innerHTML = `✓ <strong>Endereço Validado:</strong> ${data.logradouro || 'Rua localizada'}, ${data.bairro || ''} — ${data.localidade}/${data.uf}`;
                 
+                // Recalcula o frete dinâmico com base no bairro retornado
+                updateModalTotals();
+
                 // Foca no campo de número
                 if (numInput && !numInput.value) {
                     numInput.focus();
@@ -2986,9 +3239,11 @@
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
 
             if (isDelivery) {
-                const total = subtotal + DELIVERY_FEE;
+                const deliveryFee = getDynamicDeliveryFee();
+                const total = subtotal + deliveryFee;
+                const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
                 msg += `\n📦 *Subtotal dos Itens:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                msg += `🛵 *Taxa de Entrega (Frete):* R$ ${DELIVERY_FEE.toFixed(2).replace('.', ',')}\n`;
+                msg += `🛵 *Taxa de Entrega (${currentDeliveryBairroName || customerBairro}${distStr}):* R$ ${deliveryFee.toFixed(2).replace('.', ',')}\n`;
                 msg += `*💰 Valor Total a Pagar:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
             } else {
                 msg += `\n*💰 Valor Total a Pagar:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
