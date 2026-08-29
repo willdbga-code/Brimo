@@ -960,6 +960,25 @@
 
         .waze-btn:hover { background: #70DCFF; transform: scale(1.03); }
 
+        .bairro-status-badge {
+            background: linear-gradient(135deg, rgba(51, 204, 255, 0.15), rgba(255, 186, 8, 0.1));
+            border: 1px solid rgba(51, 204, 255, 0.4);
+            color: #FFF;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .bairro-status-badge strong {
+            color: var(--gold);
+        }
+
         /* === ESTILOS DO PIX NO CHECKOUT === */
         .payment-options-section {
             margin-top: 18px;
@@ -1964,7 +1983,7 @@
                         </label>
                         <label id="lbl-entrega" onclick="selectDeliveryMode('Entrega')">
                             <input type="radio" name="delivery_mode" value="Entrega">
-                            <span>🚀 Entrega (+ R$ 7,00)</span>
+                            <span id="lbl-entrega-text">🚀 Entrega (Frete Dinâmico)</span>
                         </label>
                     </div>
 
@@ -1995,7 +2014,7 @@
                         </div>
                         <div id="cep-status" class="address-status"></div>
 
-                        <input type="text" id="cust-street" class="form-input" placeholder="Rua / Avenida *">
+                        <input type="text" id="cust-street" class="form-input" placeholder="Rua / Avenida *" oninput="updateModalTotals()" onchange="updateModalTotals()">
                         
                         <div class="form-row">
                             <input type="text" id="cust-num" class="form-input" placeholder="Número (Nº) *" style="max-width: 130px;">
@@ -2003,7 +2022,7 @@
                         </div>
 
                         <div class="form-row">
-                            <input type="text" id="cust-bairro" class="form-input" placeholder="Bairro *" list="bairros-pinda-list" oninput="updateModalTotals()">
+                            <input type="text" id="cust-bairro" class="form-input" placeholder="Bairro *" list="bairros-pinda-list" oninput="updateModalTotals()" onchange="updateModalTotals()" onblur="updateModalTotals()">
                             <datalist id="bairros-pinda-list">
                                 <option value="Alto do Cardoso">
                                 <option value="Alto Tabaú">
@@ -2067,6 +2086,9 @@
                             </datalist>
                             <input type="text" id="cust-city" class="form-input" placeholder="Cidade - UF *" value="Pindamonhangaba - SP">
                         </div>
+
+                        <!-- Feedback Visual do Frete Dinâmico por Bairro / Km -->
+                        <div id="bairro-delivery-status" class="bairro-status-badge" style="display: none;"></div>
 
                         <input type="text" id="cust-ref" class="form-input" placeholder="Ponto de Referência (Opcional)">
                     </div>
@@ -2656,18 +2678,24 @@
             const deliveryLine = document.getElementById('delivery-fee-line');
             const deliveryLabel = document.getElementById('delivery-fee-label');
             const deliveryVal = document.getElementById('delivery-fee-val');
+            const lblEntregaText = document.getElementById('lbl-entrega-text');
+            const bairroStatusBox = document.getElementById('bairro-delivery-status');
+            const bairroInput = document.getElementById('cust-bairro');
             const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
 
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
             let deliveryFee = 0;
 
+            const rawBairro = bairroInput ? bairroInput.value.trim() : '';
+
             if (isDelivery && cart.length > 0) {
                 deliveryFee = getDynamicDeliveryFee();
                 if (deliveryLine) deliveryLine.style.display = 'flex';
                 
+                const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
+
                 if (deliveryLabel) {
                     if (currentDeliveryBairroName) {
-                        const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
                         deliveryLabel.innerHTML = `🛵 Taxa de Entrega (<strong>${currentDeliveryBairroName}</strong>${distStr}):`;
                     } else {
                         deliveryLabel.innerHTML = `🛵 Taxa de Entrega (Frete):`;
@@ -2676,8 +2704,30 @@
                 if (deliveryVal) {
                     deliveryVal.innerText = `+ R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
                 }
+
+                if (lblEntregaText) {
+                    lblEntregaText.innerText = `🚀 Entrega (+ R$ ${deliveryFee.toFixed(2).replace('.', ',')})`;
+                }
+
+                if (bairroStatusBox) {
+                    if (rawBairro) {
+                        const distInfo = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km da sede)` : '';
+                        bairroStatusBox.innerHTML = `📍 <strong>Bairro: ${currentDeliveryBairroName || rawBairro}</strong> &bull; Frete: <strong>R$ ${deliveryFee.toFixed(2).replace('.', ',')}</strong>${distInfo}`;
+                        bairroStatusBox.style.display = 'flex';
+                    } else {
+                        bairroStatusBox.innerHTML = `💡 <em>Selecione ou digite seu bairro acima para calcular a taxa exata!</em>`;
+                        bairroStatusBox.style.display = 'flex';
+                    }
+                }
             } else {
                 if (deliveryLine) deliveryLine.style.display = 'none';
+                if (lblEntregaText) {
+                    const estFee = getDynamicDeliveryFee();
+                    lblEntregaText.innerText = `🚀 Entrega (+ R$ ${estFee.toFixed(2).replace('.', ',')})`;
+                }
+                if (bairroStatusBox) {
+                    bairroStatusBox.style.display = 'none';
+                }
             }
 
             const total = subtotal + deliveryFee;
