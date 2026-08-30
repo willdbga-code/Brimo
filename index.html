@@ -979,6 +979,90 @@
             color: var(--gold);
         }
 
+        /* === ESTILOS DO TOGGLE DE CONDOMÍNIO (+ R$ 2,00) === */
+        .condominio-toggle-wrapper {
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .condominio-toggle-label {
+            display: block;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .condominio-toggle-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .condominio-custom-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid rgba(255, 186, 8, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            transition: all 0.25s ease;
+        }
+
+        .condominio-toggle-label:hover .condominio-custom-box {
+            border-color: var(--gold);
+            background: rgba(255, 186, 8, 0.08);
+        }
+
+        .condominio-toggle-label input[type="checkbox"]:checked + .condominio-custom-box {
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.22), rgba(255, 186, 8, 0.18));
+            border-color: var(--gold);
+            box-shadow: 0 0 14px rgba(255, 186, 8, 0.25);
+        }
+
+        .condominio-icon-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .condominio-icon {
+            font-size: 1.35rem;
+        }
+
+        .condominio-desc {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            text-align: left;
+        }
+
+        .condominio-desc strong {
+            font-size: 0.9rem;
+            color: #FFF;
+            font-weight: 700;
+        }
+
+        .condominio-desc span {
+            font-size: 0.76rem;
+            color: #BBB;
+        }
+
+        .condominio-price-tag {
+            background: rgba(255, 186, 8, 0.18);
+            color: var(--gold);
+            border: 1px solid rgba(255, 186, 8, 0.4);
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .condominio-toggle-label input[type="checkbox"]:checked + .condominio-custom-box .condominio-price-tag {
+            background: var(--gold);
+            color: #111;
+            font-weight: 900;
+        }
+
         /* === ESTILOS DO PIX NO CHECKOUT === */
         .payment-options-section {
             margin-top: 18px;
@@ -2091,6 +2175,23 @@
                         <div id="bairro-delivery-status" class="bairro-status-badge" style="display: none;"></div>
 
                         <input type="text" id="cust-ref" class="form-input" placeholder="Ponto de Referência (Opcional)">
+
+                        <!-- Opção de Entrega em Condomínio (+ R$ 2,00) -->
+                        <div class="condominio-toggle-wrapper">
+                            <label class="condominio-toggle-label" for="chk-condominio">
+                                <input type="checkbox" id="chk-condominio" onchange="updateModalTotals()">
+                                <div class="condominio-custom-box">
+                                    <div class="condominio-icon-text">
+                                        <span class="condominio-icon">🏢</span>
+                                        <div class="condominio-desc">
+                                            <strong>Entrega em Condomínio / Edifício</strong>
+                                            <span>(Portaria, interfone ou condomínio fechado)</span>
+                                        </div>
+                                    </div>
+                                    <span class="condominio-price-tag">+ R$ 2,00</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Informações Se Retirada -->
@@ -2605,10 +2706,14 @@
         let currentDeliveryFee = 6.00;
         let currentDeliveryBairroName = "";
         let currentDeliveryDistanceKm = 0;
+        const CONDOMINIO_EXTRA_FEE = 2.00;
 
         function getDynamicDeliveryFee() {
             const bairroInput = document.getElementById('cust-bairro');
             const streetInput = document.getElementById('cust-street');
+            const chkCondominio = document.getElementById('chk-condominio');
+            const isCondominio = chkCondominio && chkCondominio.checked;
+            const extraCondominio = isCondominio ? CONDOMINIO_EXTRA_FEE : 0;
             
             const rawBairro = bairroInput ? bairroInput.value.trim() : '';
             const rawStreet = streetInput ? streetInput.value.trim() : '';
@@ -2616,19 +2721,23 @@
             const normBairro = normalizeText(rawBairro);
             const normStreet = normalizeText(rawStreet);
 
+            let baseFee = 6.00;
+
             if (normBairro) {
                 if (DELIVERY_BAIRROS[normBairro]) {
-                    currentDeliveryFee = DELIVERY_BAIRROS[normBairro].preco;
+                    baseFee = DELIVERY_BAIRROS[normBairro].preco;
                     currentDeliveryBairroName = rawBairro;
                     currentDeliveryDistanceKm = DELIVERY_BAIRROS[normBairro].km;
+                    currentDeliveryFee = baseFee + extraCondominio;
                     return currentDeliveryFee;
                 }
                 
                 for (const [key, info] of Object.entries(DELIVERY_BAIRROS)) {
                     if (normBairro === key || normBairro.includes(key) || key.includes(normBairro)) {
-                        currentDeliveryFee = info.preco;
+                        baseFee = info.preco;
                         currentDeliveryBairroName = rawBairro;
                         currentDeliveryDistanceKm = info.km;
+                        currentDeliveryFee = baseFee + extraCondominio;
                         return currentDeliveryFee;
                     }
                 }
@@ -2638,15 +2747,17 @@
                 const distReta = calculateDistance(BRIMO_SEDE_COORDS.lat, BRIMO_SEDE_COORDS.lon, detectedAddressData.lat, detectedAddressData.lon);
                 const distRua = Math.max(0.5, +(distReta * 1.32).toFixed(1));
                 currentDeliveryDistanceKm = distRua;
-                currentDeliveryFee = calculateFeeByKm(distRua);
+                baseFee = calculateFeeByKm(distRua);
                 currentDeliveryBairroName = rawBairro || "GPS";
+                currentDeliveryFee = baseFee + extraCondominio;
                 return currentDeliveryFee;
             }
 
             // Padrão base inicial antes de digitar
-            currentDeliveryFee = 6.00;
+            baseFee = 6.00;
             currentDeliveryBairroName = rawBairro || "";
             currentDeliveryDistanceKm = 0;
+            currentDeliveryFee = baseFee + extraCondominio;
             return currentDeliveryFee;
         }
 
@@ -2681,6 +2792,8 @@
             const lblEntregaText = document.getElementById('lbl-entrega-text');
             const bairroStatusBox = document.getElementById('bairro-delivery-status');
             const bairroInput = document.getElementById('cust-bairro');
+            const chkCondominio = document.getElementById('chk-condominio');
+            const isCondominio = chkCondominio && chkCondominio.checked;
             const isDelivery = document.getElementById('lbl-entrega').classList.contains('active');
 
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
@@ -2693,12 +2806,13 @@
                 if (deliveryLine) deliveryLine.style.display = 'flex';
                 
                 const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
+                const condLabel = isCondominio ? ' + Condomínio' : '';
 
                 if (deliveryLabel) {
                     if (currentDeliveryBairroName) {
-                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega (<strong>${currentDeliveryBairroName}</strong>${distStr}):`;
+                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega (<strong>${currentDeliveryBairroName}${condLabel}</strong>${distStr}):`;
                     } else {
-                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega (Frete):`;
+                        deliveryLabel.innerHTML = `🛵 Taxa de Entrega${isCondominio ? ' (com Condomínio)' : ' (Frete)'}:`;
                     }
                 }
                 if (deliveryVal) {
@@ -2712,7 +2826,10 @@
                 if (bairroStatusBox) {
                     if (rawBairro) {
                         const distInfo = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km da sede)` : '';
-                        bairroStatusBox.innerHTML = `📍 <strong>Bairro: ${currentDeliveryBairroName || rawBairro}</strong> &bull; Frete: <strong>R$ ${deliveryFee.toFixed(2).replace('.', ',')}</strong>${distInfo}`;
+                        bairroStatusBox.innerHTML = `📍 <strong>Bairro: ${currentDeliveryBairroName || rawBairro}</strong>${isCondominio ? ' <em>(+ R$ 2,00 Condomínio)</em>' : ''} &bull; Frete: <strong>R$ ${deliveryFee.toFixed(2).replace('.', ',')}</strong>${distInfo}`;
+                        bairroStatusBox.style.display = 'flex';
+                    } else if (isCondominio) {
+                        bairroStatusBox.innerHTML = `🏢 <strong>Taxa de Condomínio (+ R$ 2,00) inclusa!</strong> Digite seu bairro acima para o valor completo.`;
                         bairroStatusBox.style.display = 'flex';
                     } else {
                         bairroStatusBox.innerHTML = `💡 <em>Selecione ou digite seu bairro acima para calcular a taxa exata!</em>`;
@@ -3289,11 +3406,19 @@
             const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
 
             if (isDelivery) {
+                const chkCondominio = document.getElementById('chk-condominio');
+                const isCondominio = chkCondominio && chkCondominio.checked;
                 const deliveryFee = getDynamicDeliveryFee();
                 const total = subtotal + deliveryFee;
                 const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
+                const condLabel = isCondominio ? ' + Condomínio' : '';
+
+                if (isCondominio) {
+                    msg += `🏢 *Tipo de Residência:* Condomínio / Edifício (Taxa de portaria/acesso inclusa)\n`;
+                }
+
                 msg += `\n📦 *Subtotal dos Itens:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                msg += `🛵 *Taxa de Entrega (${currentDeliveryBairroName || customerBairro}${distStr}):* R$ ${deliveryFee.toFixed(2).replace('.', ',')}\n`;
+                msg += `🛵 *Taxa de Entrega (${currentDeliveryBairroName || customerBairro}${condLabel}${distStr}):* R$ ${deliveryFee.toFixed(2).replace('.', ',')}\n`;
                 msg += `*💰 Valor Total a Pagar:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
             } else {
                 msg += `\n*💰 Valor Total a Pagar:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
