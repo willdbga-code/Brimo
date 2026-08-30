@@ -2182,10 +2182,10 @@
                                 <input type="checkbox" id="chk-condominio" onchange="updateModalTotals()">
                                 <div class="condominio-custom-box">
                                     <div class="condominio-icon-text">
-                                        <span class="condominio-icon">🏢</span>
+                                        <span class="condominio-icon">🏘️</span>
                                         <div class="condominio-desc">
-                                            <strong>Entrega em Condomínio / Edifício</strong>
-                                            <span>(Portaria, interfone ou condomínio fechado)</span>
+                                            <strong>Entrega em Condomínio</strong>
+                                            <span>(Condomínio fechado ou portaria)</span>
                                         </div>
                                     </div>
                                     <span class="condominio-price-tag">+ R$ 2,00</span>
@@ -3414,7 +3414,7 @@
                 const condLabel = isCondominio ? ' + Condomínio' : '';
 
                 if (isCondominio) {
-                    msg += `🏢 *Tipo de Residência:* Condomínio / Edifício (Taxa de portaria/acesso inclusa)\n`;
+                    msg += `🏘️ *Tipo de Residência:* Condomínio (Taxa de portaria/acesso inclusa)\n`;
                 }
 
                 msg += `\n📦 *Subtotal dos Itens:* R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
