@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brimo Admin | Painel de Controle & Cozinha</title>
+    <title>Brimo Admin | Gestão de Cardápio & Fretes</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -365,15 +365,6 @@
             border-radius: 8px 8px 0 0;
         }
 
-        .tab-badge {
-            background: var(--orange);
-            color: #FFF;
-            font-size: 0.7rem;
-            font-weight: 900;
-            padding: 2px 7px;
-            border-radius: 12px;
-        }
-
         /* TAB SECTIONS */
         .tab-content {
             display: none;
@@ -384,14 +375,14 @@
             display: block;
         }
 
-        /* === ORDERS KDS PANEL === */
-        .orders-toolbar {
+        /* === MENU PRODUCTS EDITOR === */
+        .products-toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 15px;
         }
 
         .filter-group {
@@ -418,183 +409,35 @@
             border-color: var(--orange);
         }
 
-        .orders-grid {
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
         }
 
-        .order-card {
+        .product-edit-card {
             background: var(--card-bg);
             border: 1.5px solid var(--card-border);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transition: border-color 0.2s ease, transform 0.2s ease;
         }
 
-        .order-card:hover {
+        .product-edit-card:hover {
             border-color: var(--gold);
-            transform: translateY(-2px);
-        }
-
-        .order-card-header {
-            background: var(--card-header);
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .order-id {
-            font-weight: 800;
-            font-size: 1rem;
-            color: var(--gold);
-        }
-
-        .order-time {
-            font-size: 0.75rem;
-            color: #AAA;
-        }
-
-        .order-status-badge {
-            font-size: 0.72rem;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-        }
-
-        .status-pendente { background: rgba(255, 186, 8, 0.2); color: var(--gold); border: 1px solid var(--gold); }
-        .status-preparo { background: rgba(51, 204, 255, 0.2); color: var(--blue); border: 1px solid var(--blue); }
-        .status-entrega { background: rgba(232, 93, 4, 0.2); color: var(--orange); border: 1px solid var(--orange); }
-        .status-concluido { background: rgba(37, 211, 102, 0.2); color: var(--green); border: 1px solid var(--green); }
-        .status-cancelado { background: rgba(255, 77, 77, 0.2); color: var(--danger); border: 1px solid var(--danger); }
-
-        .order-card-body {
-            padding: 16px 18px;
-            flex: 1;
-        }
-
-        .customer-row {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-
-        .customer-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #FFF;
-        }
-
-        .customer-address {
-            font-size: 0.82rem;
-            color: #BBB;
-            margin-top: 3px;
-        }
-
-        .order-items-list {
-            margin: 12px 0;
-            list-style: none;
-        }
-
-        .order-item-row {
-            font-size: 0.88rem;
-            margin-bottom: 8px;
-            padding: 4px 0;
-        }
-
-        .order-item-title {
-            font-weight: 700;
-            color: #FFF;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .order-item-sem {
-            font-size: 0.78rem;
-            color: var(--danger);
-            background: rgba(255, 77, 77, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 2px;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .order-card-totals {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px 18px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 0.85rem;
-        }
-
-        .order-total-line {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--gold);
-            margin-top: 4px;
-        }
-
-        .order-card-actions {
-            padding: 12px 18px;
-            background: #141414;
-            display: flex;
-            gap: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.82rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .btn-status-next { background: var(--green); color: #111; }
-        .btn-status-next:hover { background: var(--green-dark); color: #FFF; }
-        .btn-wa-msg { background: rgba(37, 211, 102, 0.15); color: var(--green); border: 1px solid var(--green); }
-        .btn-wa-msg:hover { background: var(--green); color: #111; }
-        .btn-print { background: rgba(255, 255, 255, 0.08); color: #FFF; }
-        .btn-print:hover { background: rgba(255, 255, 255, 0.2); }
-
-        /* === MENU PRODUCTS EDITOR === */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 18px;
-        }
-
-        .product-edit-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
         .product-edit-card.disabled {
-            opacity: 0.6;
-            filter: grayscale(0.7);
+            opacity: 0.65;
+            filter: grayscale(0.6);
+            border-color: rgba(255, 77, 77, 0.4);
         }
 
         .prod-img-box {
-            height: 140px;
+            height: 160px;
             position: relative;
             background: #000;
         }
@@ -609,37 +452,80 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             color: var(--gold);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 800;
-            padding: 3px 8px;
+            padding: 3px 10px;
             border-radius: 6px;
             border: 1px solid var(--gold);
         }
 
         .prod-edit-body {
-            padding: 16px;
+            padding: 18px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 12px;
         }
 
-        .prod-name {
-            font-size: 1.05rem;
-            font-weight: 700;
+        .edit-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .edit-field-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            letter-spacing: 0.5px;
+        }
+
+        .input-title-edit {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0D0D0D;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
             color: #FFF;
-            margin-bottom: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-title-edit:focus {
+            border-color: var(--gold);
+        }
+
+        .textarea-desc-edit {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0D0D0D;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #DDD;
+            font-size: 0.85rem;
+            min-height: 70px;
+            resize: vertical;
+            outline: none;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        .textarea-desc-edit:focus {
+            border-color: var(--gold);
         }
 
         .prod-price-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 12px;
             padding-top: 10px;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            border-top: 1px dashed rgba(255, 255, 255, 0.12);
+            margin-top: 4px;
         }
 
         .price-input-group {
@@ -651,17 +537,23 @@
         .price-input-group span {
             color: var(--gold);
             font-weight: 800;
+            font-size: 1.1rem;
         }
 
         .input-price-edit {
-            width: 90px;
-            padding: 6px 10px;
-            background: #0d0d0d;
+            width: 100px;
+            padding: 8px 10px;
+            background: #0D0D0D;
             border: 1.5px solid rgba(255, 186, 8, 0.4);
-            border-radius: 6px;
+            border-radius: 8px;
             color: #FFF;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .input-price-edit:focus {
+            border-color: var(--gold);
         }
 
         .toggle-switch-wrapper {
@@ -911,22 +803,6 @@
             70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
-
-        /* THERMAL PRINT MEDIA */
-        @media print {
-            body * { visibility: hidden; }
-            #print-receipt-area, #print-receipt-area * { visibility: visible; }
-            #print-receipt-area {
-                position: absolute;
-                left: 0; top: 0;
-                width: 80mm;
-                color: #000;
-                background: #FFF;
-                font-family: monospace;
-                font-size: 12px;
-                padding: 10px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -958,7 +834,7 @@
                 <img src="Logo/Logo.svg" onerror="this.onerror=null; this.src='Logo/Prancheta 1.png';" alt="Brimo" class="topbar-logo">
                 <div class="topbar-title-group">
                     <h1>Brimo</h1>
-                    <span>Painel de Gestão</span>
+                    <span>Gestão de Cardápio & Fretes</span>
                 </div>
             </a>
 
@@ -980,48 +856,45 @@
         </header>
 
         <main class="admin-main">
-            <!-- KPIS DO DIA -->
+            <!-- KPIS DO CARDÁPIO & LOJA -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-icon">📋</div>
+                    <div class="kpi-icon">🌯</div>
                     <div class="kpi-info">
-                        <h4>Pedidos Hoje</h4>
-                        <div class="kpi-value" id="kpi-orders-count">0</div>
+                        <h4>Itens no Cardápio</h4>
+                        <div class="kpi-value" id="kpi-total-items">29</div>
                     </div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-icon">🟢</div>
                     <div class="kpi-info">
-                        <h4>Faturamento Estimado</h4>
-                        <div class="kpi-value" id="kpi-total-revenue">R$ 0,00</div>
-                    </div>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon">🍳</div>
-                    <div class="kpi-info">
-                        <h4>Na Cozinha</h4>
-                        <div class="kpi-value" id="kpi-kitchen-count">0</div>
+                        <h4>Itens Disponíveis</h4>
+                        <div class="kpi-value" id="kpi-active-items">29</div>
                     </div>
                 </div>
 
                 <div class="kpi-card">
                     <div class="kpi-icon">🛵</div>
                     <div class="kpi-info">
-                        <h4>Em Entrega</h4>
-                        <div class="kpi-value" id="kpi-delivery-count">0</div>
+                        <h4>Bairros Mapeados</h4>
+                        <div class="kpi-value" id="kpi-total-bairros">58</div>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon">🏢</div>
+                    <div class="kpi-info">
+                        <h4>Taxa Condomínio</h4>
+                        <div class="kpi-value" id="kpi-condominio-val">R$ 2,00</div>
                     </div>
                 </div>
             </div>
 
             <!-- TABS DE NAVEGAÇÃO -->
             <div class="admin-tabs">
-                <button class="tab-btn active" onclick="switchTab('orders')">
-                    📋 Pedidos & Cozinha <span class="tab-badge" id="badge-orders-active">0</span>
-                </button>
-                <button class="tab-btn" onclick="switchTab('products')">
-                    🌯 Gestão do Cardápio & Preços
+                <button class="tab-btn active" onclick="switchTab('products')">
+                    🌯 Gestão do Cardápio, Preços & Textos
                 </button>
                 <button class="tab-btn" onclick="switchTab('frete')">
                     🛵 Tabela de Frete & Bairros
@@ -1031,36 +904,24 @@
                 </button>
             </div>
 
-            <!-- TAB 1: COZINHA & PEDIDOS -->
-            <section id="tab-orders" class="tab-content active">
-                <div class="orders-toolbar">
+            <!-- TAB 1: CARDÁPIO, PREÇOS & TEXTOS -->
+            <section id="tab-products" class="tab-content active">
+                <div class="products-toolbar">
                     <div class="filter-group">
-                        <button class="filter-btn active" onclick="filterOrders('all', this)">Todos (<span id="count-all">0</span>)</button>
-                        <button class="filter-btn" onclick="filterOrders('Pendente', this)">Pendentes (<span id="count-pendente">0</span>)</button>
-                        <button class="filter-btn" onclick="filterOrders('Em Preparo', this)">Em Preparo (<span id="count-preparo">0</span>)</button>
-                        <button class="filter-btn" onclick="filterOrders('Saiu para Entrega', this)">Em Entrega (<span id="count-entrega">0</span>)</button>
-                        <button class="filter-btn" onclick="filterOrders('Concluído', this)">Concluídos (<span id="count-concluido">0</span>)</button>
+                        <button class="filter-btn active" onclick="filterCategory('all', this)">Todos (<span id="count-all-prods">29</span>)</button>
+                        <button class="filter-btn" onclick="filterCategory('Shawarmas & Lanches', this)">Shawarmas & Lanches</button>
+                        <button class="filter-btn" onclick="filterCategory('Pratos da Casa', this)">Pratos da Casa</button>
+                        <button class="filter-btn" onclick="filterCategory('Pastas & Entradas', this)">Pastas & Entradas</button>
+                        <button class="filter-btn" onclick="filterCategory('Sobremesas Árabes', this)">Sobremesas</button>
                     </div>
 
-                    <button class="btn-view-site" onclick="clearAllOrders()" style="color: var(--danger); border-color: rgba(255,77,77,0.4);">
-                        🗑️ Limpar Histórico
-                    </button>
-                </div>
-
-                <div id="orders-container" class="orders-grid">
-                    <!-- Cards de Pedidos via JS -->
-                </div>
-            </section>
-
-            <!-- TAB 2: CARDÁPIO & PREÇOS -->
-            <section id="tab-products" class="tab-content">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap:10px;">
-                    <p style="color:#BBB; font-size:0.9rem;">
-                        💡 Altere o preço ou pause itens que esgotaram no dia. As alterações refletem no site em tempo real!
-                    </p>
                     <button class="btn-save-master" onclick="saveProductsState()">
-                        💾 Salvar Alterações no Cardápio
+                        💾 Salvar Todas as Alterações
                     </button>
+                </div>
+
+                <div class="search-box-bar">
+                    <input type="text" id="prod-search-input" class="search-input" placeholder="🔍 Pesquisar prato ou sobremesa pelo nome..." oninput="searchProducts(this.value)">
                 </div>
 
                 <div id="products-container" class="products-grid">
@@ -1068,7 +929,7 @@
                 </div>
             </section>
 
-            <!-- TAB 3: FRETE & BAIRROS -->
+            <!-- TAB 2: FRETE & BAIRROS -->
             <section id="tab-frete" class="tab-content">
                 <div class="frete-config-box">
                     <div class="frete-input-card">
@@ -1076,7 +937,7 @@
                         <p>Valor somado quando o cliente marca a opção de condomínio fechado.</p>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span style="color:var(--gold); font-weight:800;">R$</span>
-                            <input type="number" id="cfg-condominio-fee" class="input-frete-table" value="2.00" step="0.50">
+                            <input type="number" id="cfg-condominio-fee" class="input-frete-table" value="2.00" step="0.50" onchange="updateCondominioKPI(this.value)">
                         </div>
                     </div>
 
@@ -1113,7 +974,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: CONFIGURAÇÕES -->
+            <!-- TAB 3: CONFIGURAÇÕES -->
             <section id="tab-settings" class="tab-content">
                 <div class="settings-card">
                     <h3 class="settings-title">📞 Contatos & Recebimento de Pedidos</h3>
@@ -1160,9 +1021,6 @@
         </main>
     </div>
 
-    <!-- ÁREA OCULTA PARA IMPRESSÃO DE COMANDA TÉRMICA -->
-    <div id="print-receipt-area" style="display:none;"></div>
-
     <!-- TOAST NOTIFICATION -->
     <div id="toast-notify" class="toast-notify">
         <span>✓</span>
@@ -1173,44 +1031,276 @@
     <script>
         const ADMIN_PASSWORD = "Shawermalla";
 
-        /* === CATÁLOGO INICIAL COMPLETO DE PRODUTOS === */
+        /* === CATÁLOGO INICIAL COMPLETO DE PRODUTOS COM NOMES, PREÇOS E DESCRIÇÕES === */
         const DEFAULT_PRODUCTS = [
             // 1. Shawarmas e Lanches
-            { id: 1, name: "Shawarma de Carne", price: 30.00, category: "Shawarmas & Lanches", img: "Fotos/Shawerma Carne.jpg", active: true },
-            { id: 2, name: "Shawarma de Frango", price: 25.00, category: "Shawarmas & Lanches", img: "Fotos/Shawerma de Frango.jpg", active: true },
-            { id: 3, name: "Shawarma Misto", price: 28.00, category: "Shawarmas & Lanches", img: "Fotos/Shawerma Misto.jpg", active: true },
-            { id: 4, name: "Shawerma de Kafta", price: 20.00, category: "Shawarmas & Lanches", img: "Fotos/Shawerma de kafka.jpg", active: true },
-            { id: 5, name: "Shawerma de Falafel Vegetariano", price: 20.00, category: "Shawarmas & Lanches", img: "Fotos/Shawerma Vegetariano.jpg", active: true },
-            { id: 6, name: "Arayes de Carne", price: 15.00, category: "Shawarmas & Lanches", img: "Fotos/Arayes.jpg", active: true },
-            { id: 7, name: "Lanche de Batata Frita", price: 20.00, category: "Shawarmas & Lanches", img: "Fotos/Lanche Batata Frita.jpg", active: true },
+            { 
+                id: 1, 
+                name: "Shawarma de Carne", 
+                price: 30.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Shawerma Carne.jpg", 
+                desc: "Pão Sírio, tiras suculentas de carne, tomate, cebola, salsinha fresca, molho de tahine e pasta de alho artesanal.",
+                active: true 
+            },
+            { 
+                id: 2, 
+                name: "Shawarma de Frango", 
+                price: 25.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Shawerma de Frango.jpg", 
+                desc: "Pão Sírio, frango selecionado, batata frita crocante e nossa pasta de alho artesanal irresistível (Opção com Alface).",
+                active: true 
+            },
+            { 
+                id: 3, 
+                name: "Shawarma Misto", 
+                price: 28.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Shawerma Misto.jpg", 
+                desc: "Pão Sírio, combinação perfeita de carne e frango, tomate, cebola, alface crocante, batata frita e pasta de alho.",
+                active: true 
+            },
+            { 
+                id: 4, 
+                name: "Shawerma de Kafta", 
+                price: 20.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Shawerma de kafka.jpg", 
+                desc: "Pão Sírio, kafta suculenta grelhada, tomate, cebola, salsinha e creme de alho com molho tahine especial.",
+                active: true 
+            },
+            { 
+                id: 5, 
+                name: "Shawerma de Falafel Vegetariano", 
+                price: 20.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Shawerma Vegetariano.jpg", 
+                desc: "Pão Sírio, bolinhos de falafel crocantes, tomate, alface, salsinha, hortelã, rabanete, picles e molho de tahine.",
+                active: true 
+            },
+            { 
+                id: 6, 
+                name: "Arayes de Carne", 
+                price: 15.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Arayes.jpg", 
+                desc: "Pão Sírio tostado na prensa recheado com carne temperada suculenta. Crocante por fora e macio por dentro.",
+                active: true 
+            },
+            { 
+                id: 7, 
+                name: "Lanche de Batata Frita", 
+                price: 20.00, 
+                category: "Shawarmas & Lanches", 
+                img: "Fotos/Lanche Batata Frita.jpg", 
+                desc: "Pão Sírio recheado com batata frita crocante, creme de alho intenso, picles artesanal e salada especial.",
+                active: true 
+            },
             
             // 2. Pratos Executivos
-            { id: 8, name: "Prato Shawarma Carne", price: 50.00, category: "Pratos da Casa", img: "Fotos/Sessão do Studio-078.jpg", active: true },
-            { id: 9, name: "Prato Shawarma Frango", price: 45.00, category: "Pratos da Casa", img: "Fotos/Sessão do Studio-152.jpg", active: true },
-            { id: 10, name: "Prato Shawarma Misto", price: 50.00, category: "Pratos da Casa", img: "Fotos/Prato Shawarma Misto.jpg", active: true },
-            { id: 11, name: "Prato Kafta Tradicional", price: 20.00, category: "Pratos da Casa", img: "Fotos/Sessão do Studio-031.jpg", active: true },
-            { id: 12, name: "Kibe Cru Tradicional", price: 35.00, category: "Pratos da Casa", img: "Fotos/Kibe Cru.jpg", active: true },
+            { 
+                id: 8, 
+                name: "Prato Shawarma Carne", 
+                price: 50.00, 
+                category: "Pratos da Casa", 
+                img: "Fotos/Sessão do Studio-078.jpg", 
+                desc: "Porção generosa de carne de Shawarma, acompanhada de verdes frescos, batata frita crocante, pão sírio, pasta de alho e molho tahine.",
+                active: true 
+            },
+            { 
+                id: 9, 
+                name: "Prato Shawarma Frango", 
+                price: 45.00, 
+                category: "Pratos da Casa", 
+                img: "Fotos/Sessão do Studio-152.jpg", 
+                desc: "Porção generosa de frango marinado especial, verdes frescos, picles árabes, batata frita, pão sírio e molho de alho cremoso.",
+                active: true 
+            },
+            { 
+                id: 10, 
+                name: "Prato Shawarma Misto", 
+                price: 50.00, 
+                category: "Pratos da Casa", 
+                img: "Fotos/Prato Shawarma Misto.jpg", 
+                desc: "Combinação generosa de carne e frango de Shawarma, batata frita crocante, pão sírio, pasta de alho, cebola temperada e molho tahine.",
+                active: true 
+            },
+            { 
+                id: 11, 
+                name: "Prato Kafta Tradicional", 
+                price: 20.00, 
+                category: "Pratos da Casa", 
+                img: "Fotos/Sessão do Studio-031.jpg", 
+                desc: "Kafta suculenta servida no prato com tomate fresco, cebola temperada, creme de alho especial e molho tahine.",
+                active: true 
+            },
+            { 
+                id: 12, 
+                name: "Kibe Cru Tradicional", 
+                price: 35.00, 
+                category: "Pratos da Casa", 
+                img: "Fotos/Kibe Cru.jpg", 
+                desc: "Kibe cru artesanal finamente temperado com especiarias sírias, azeite de oliva extravirgem, hortelã fresca e cebola roxa. Acompanha pão sírio.",
+                active: true 
+            },
 
             // 3. Pastas & Entradas
-            { id: 13, name: "Homus (250g)", price: 30.00, category: "Pastas & Entradas", img: "Fotos/homus.jpg", active: true },
-            { id: 14, name: "Babaghanoush (250g)", price: 35.00, category: "Pastas & Entradas", img: "Fotos/babaganush.jpg", active: true },
-            { id: 15, name: "Labneh Coalhada Seca (250g)", price: 30.00, category: "Pastas & Entradas", img: "Fotos/Coalhada.jpg", active: true },
-            { id: 16, name: "Porção Falafel Especial", price: 40.00, category: "Pastas & Entradas", img: "Fotos/Falafel.jpg", active: true },
-            { id: 17, name: "Kibe Frito Grande", price: 10.00, category: "Pastas & Entradas", img: "Fotos/Kibe Grande.jpg", active: true },
-            { id: 18, name: "Mini Kibe Frito", price: 6.00, category: "Pastas & Entradas", img: "Fotos/Sessão do Studio-046.jpg", active: true },
-            { id: 19, name: "Esfiha de Carne Tradicional (Unidade)", price: 8.00, category: "Pastas & Entradas", img: "Fotos/Sessão do Studio-186.jpg", active: true },
+            { 
+                id: 13, 
+                name: "Homus (250g)", 
+                price: 30.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/homus.jpg", 
+                desc: "Homus - pasta pura e aveludada de grão-de-bico artesanal selecionado (porção de 250g acompanhada de pão sírio).",
+                active: true 
+            },
+            { 
+                id: 14, 
+                name: "Babaghanoush (250g)", 
+                price: 35.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/babaganush.jpg", 
+                desc: "Pasta tradicional de berinjela defumada na brasa com molho de tahine (porção de 250g acompanhada de pão sírio).",
+                active: true 
+            },
+            { 
+                id: 15, 
+                name: "Labneh Coalhada Seca (250g)", 
+                price: 30.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/Coalhada.jpg", 
+                desc: "Coalhada seca artesanal extremamente cremosa, porção de 250g servida com azeite extravirgem e pão sírio.",
+                active: true 
+            },
+            { 
+                id: 16, 
+                name: "Porção Falafel Especial", 
+                price: 40.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/Falafel.jpg", 
+                desc: "6 bolinhos de falafel hiper crocantes, acompanhados de verdes frescos, picles, Homus e molho de tahine.",
+                active: true 
+            },
+            { 
+                id: 17, 
+                name: "Kibe Frito Grande", 
+                price: 10.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/Kibe Grande.jpg", 
+                desc: "Kibe frito artesanal tamanho grande, bem recheado com carne temperada e temperos sírios.",
+                active: true 
+            },
+            { 
+                id: 18, 
+                name: "Mini Kibe Frito", 
+                price: 6.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/Sessão do Studio-046.jpg", 
+                desc: "Mini kibe frito artesanal, crocante por fora e suculento por dentro. Acompanha pasta de alho.",
+                active: true 
+            },
+            { 
+                id: 19, 
+                name: "Esfiha de Carne Tradicional (Unidade)", 
+                price: 8.00, 
+                category: "Pastas & Entradas", 
+                img: "Fotos/Sessão do Studio-186.jpg", 
+                desc: "Esfiha artesanal assada no forno com massa macia e recheio farto de carne moída com especiarias árabes.",
+                active: true 
+            },
 
             // 4. Sobremesas
-            { id: 20, name: "Baklava Folhado de Nozes", price: 15.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-234.jpg", active: true },
-            { id: 21, name: "Ninho de Pistache", price: 12.00, category: "Sobremesas Árabes", img: "Fotos/Ninho Pistache.jpg", active: true },
-            { id: 22, name: "Ninho de Damasco", price: 12.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-261.jpg", active: true },
-            { id: 23, name: "Ninho de Castanha de Caju", price: 12.00, category: "Sobremesas Árabes", img: "Fotos/Ninho Caju.jpg", active: true },
-            { id: 24, name: "Ninho de Amêndoas", price: 12.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-254.jpg", active: true },
-            { id: 25, name: "Ninho de Nozes", price: 12.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-266.jpg", active: true },
-            { id: 26, name: "Ma'amoul de Nozes", price: 10.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-276.jpg", active: true },
-            { id: 27, name: "Ma'amoul de Tâmara", price: 10.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-276.jpg", active: true },
-            { id: 28, name: "Caixa Mix Doce Árabe (6 un)", price: 16.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-222.jpg", active: true },
-            { id: 29, name: "Caixa Mix Doce Árabe (12 un)", price: 30.00, category: "Sobremesas Árabes", img: "Fotos/Sessão do Studio-216.jpg", active: true }
+            { 
+                id: 20, 
+                name: "Baklava Folhado de Nozes", 
+                price: 15.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-234.jpg", 
+                desc: "Massa folhada mil-folhas super crocante recheada com nozes nobres, pistache e calda aromática de flor de laranjeira.",
+                active: true 
+            },
+            { 
+                id: 21, 
+                name: "Ninho de Pistache", 
+                price: 12.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Ninho Pistache.jpg", 
+                desc: "Delicado ninho de massa folhada árabe crocante recheado com pistaches selecionados e calda aromática.",
+                active: true 
+            },
+            { 
+                id: 22, 
+                name: "Ninho de Damasco", 
+                price: 12.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-261.jpg", 
+                desc: "Ninho fino de massa folhada dourada e crocante recheado com puro damasco turco e calda especial.",
+                active: true 
+            },
+            { 
+                id: 23, 
+                name: "Ninho de Castanha de Caju", 
+                price: 12.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Ninho Caju.jpg", 
+                desc: "Ninho folhado crocante artesanal recheado com castanhas de caju selecionadas e levemente tostadas.",
+                active: true 
+            },
+            { 
+                id: 24, 
+                name: "Ninho de Amêndoas", 
+                price: 12.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-254.jpg", 
+                desc: "Ninho fino de massa folhada crocante recheado com amêndoas inteiras tostadas e calda aromática.",
+                active: true 
+            },
+            { 
+                id: 25, 
+                name: "Ninho de Nozes", 
+                price: 12.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-266.jpg", 
+                desc: "Ninho árabe folhado crocante com generoso recheio de nozes nobres selecionadas.",
+                active: true 
+            },
+            { 
+                id: 26, 
+                name: "Ma'amoul de Nozes", 
+                price: 10.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-276.jpg", 
+                desc: "Biscoito amanteigado refinado que derrete na boca, recheado com nozes moídas.",
+                active: true 
+            },
+            { 
+                id: 27, 
+                name: "Ma'amoul de Tâmara", 
+                price: 10.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-276.jpg", 
+                desc: "Biscoito amanteigado refinado recheado com pasta natural de tâmaras secas do Oriente Médio.",
+                active: true 
+            },
+            { 
+                id: 28, 
+                name: "Caixa Mix Doce Árabe (6 un)", 
+                price: 16.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-222.jpg", 
+                desc: "Caixa especial com 6 unidades sortidas dos melhores doces artesanais árabes: folhados e ninhos.",
+                active: true 
+            },
+            { 
+                id: 29, 
+                name: "Caixa Mix Doce Árabe (12 un)", 
+                price: 30.00, 
+                category: "Sobremesas Árabes", 
+                img: "Fotos/Sessão do Studio-216.jpg", 
+                desc: "Caixa completa e presenteável com 12 unidades sortidas dos mais nobres doces árabes tradicionais.",
+                active: true 
+            }
         ];
 
         /* === TABELA DE BAIRROS OFICIAL === */
@@ -1278,8 +1368,17 @@
 
         /* === STATE INITIALIZATION === */
         let productsState = JSON.parse(localStorage.getItem('brimo_products')) || DEFAULT_PRODUCTS;
+        
+        // Garante que cada produto possua campo de descrição
+        productsState = productsState.map(p => {
+            const defaultItem = DEFAULT_PRODUCTS.find(d => d.id === p.id);
+            return {
+                ...p,
+                desc: p.desc || (defaultItem ? defaultItem.desc : "")
+            };
+        });
+
         let bairrosState = JSON.parse(localStorage.getItem('brimo_delivery_bairros')) || DEFAULT_BAIRROS;
-        let ordersState = JSON.parse(localStorage.getItem('brimo_orders')) || [];
         let storeConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {
             whatsapp: "5512992424864",
             pixKey: "55.574.702/0001-70",
@@ -1333,7 +1432,6 @@
         function initDashboard() {
             renderStoreStatus();
             renderKPIS();
-            renderOrders('all');
             renderProducts();
             renderBairrosTable();
             loadSettingsInputs();
@@ -1372,229 +1470,61 @@
 
         /* === KPI CALCULATIONS === */
         function renderKPIS() {
-            const orders = JSON.parse(localStorage.getItem('brimo_orders')) || [];
-            document.getElementById('kpi-orders-count').innerText = orders.length;
-            
-            const totalRev = orders
-                .filter(o => o.status !== 'Cancelado')
-                .reduce((sum, o) => sum + (o.total || 0), 0);
-            document.getElementById('kpi-total-revenue').innerText = `R$ ${totalRev.toFixed(2).replace('.', ',')}`;
-
-            const inKitchen = orders.filter(o => o.status === 'Pendente' || o.status === 'Em Preparo').length;
-            document.getElementById('kpi-kitchen-count').innerText = inKitchen;
-            document.getElementById('badge-orders-active').innerText = inKitchen;
-
-            const inDelivery = orders.filter(o => o.status === 'Saiu para Entrega').length;
-            document.getElementById('kpi-delivery-count').innerText = inDelivery;
+            document.getElementById('kpi-total-items').innerText = productsState.length;
+            document.getElementById('kpi-active-items').innerText = productsState.filter(p => p.active).length;
+            document.getElementById('kpi-total-bairros').innerText = Object.keys(bairrosState).length;
+            document.getElementById('kpi-condominio-val').innerText = `R$ ${(storeConfig.condominioFee || 2.00).toFixed(2).replace('.', ',')}`;
         }
 
-        /* === ORDERS MANAGEMENT (KDS) === */
-        let currentFilter = 'all';
+        function updateCondominioKPI(val) {
+            document.getElementById('kpi-condominio-val').innerText = `R$ ${(parseFloat(val) || 2.00).toFixed(2).replace('.', ',')}`;
+        }
 
-        function filterOrders(status, btn) {
-            currentFilter = status;
+        /* === PRODUCTS & TEXTS MANAGEMENT === */
+        let currentCategoryFilter = 'all';
+        let currentSearchQuery = '';
+
+        function filterCategory(cat, btn) {
+            currentCategoryFilter = cat;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            renderOrders(status);
+            renderProducts();
         }
 
-        function renderOrders(filter = 'all') {
-            ordersState = JSON.parse(localStorage.getItem('brimo_orders')) || [];
-            const container = document.getElementById('orders-container');
+        function searchProducts(query) {
+            currentSearchQuery = query.toLowerCase().trim();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('products-container');
             if (!container) return;
 
-            // Counts
-            document.getElementById('count-all').innerText = ordersState.length;
-            document.getElementById('count-pendente').innerText = ordersState.filter(o => o.status === 'Pendente').length;
-            document.getElementById('count-preparo').innerText = ordersState.filter(o => o.status === 'Em Preparo').length;
-            document.getElementById('count-entrega').innerText = ordersState.filter(o => o.status === 'Saiu para Entrega').length;
-            document.getElementById('count-concluido').innerText = ordersState.filter(o => o.status === 'Concluído').length;
+            document.getElementById('count-all-prods').innerText = productsState.length;
 
-            let filtered = ordersState;
-            if (filter !== 'all') {
-                filtered = ordersState.filter(o => o.status === filter);
+            let filtered = productsState;
+            if (currentCategoryFilter !== 'all') {
+                filtered = filtered.filter(p => p.category === currentCategoryFilter);
+            }
+
+            if (currentSearchQuery) {
+                filtered = filtered.filter(p => 
+                    p.name.toLowerCase().includes(currentSearchQuery) || 
+                    (p.desc && p.desc.toLowerCase().includes(currentSearchQuery))
+                );
             }
 
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #888;">
-                        <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
-                        <h3>Nenhum pedido neste filtro no momento.</h3>
-                        <p style="font-size: 0.85rem; margin-top: 5px;">Os novos pedidos feitos pelos clientes no site aparecerão aqui automaticamente!</p>
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
+                        <h3>Nenhum prato ou sobremesa encontrado.</h3>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = filtered.map(order => {
-                const statusClass = `status-${(order.status || 'Pendente').toLowerCase().replace(/\s+/g, '')}`;
-                
-                const itemsHTML = (order.items || []).map(item => `
-                    <li class="order-item-row">
-                        <div class="order-item-title">
-                            <span>1x ${item.name}</span>
-                            <span>R$ ${(item.price || 0).toFixed(2).replace('.', ',')}</span>
-                        </div>
-                        ${item.removedIngredients && item.removedIngredients.length > 0 ? `
-                            <div class="order-item-sem">🚫 Sem: ${item.removedIngredients.join(', ')}</div>
-                        ` : ''}
-                    </li>
-                `).join('');
-
-                const nextStatusBtn = getNextStatusButton(order);
-
-                return `
-                    <div class="order-card" id="order-card-${order.id}">
-                        <div class="order-card-header">
-                            <div>
-                                <span class="order-id">#${order.id}</span>
-                                <div class="order-time">🕒 ${order.time || 'Hoje'}</div>
-                            </div>
-                            <span class="order-status-badge ${statusClass}">${order.status || 'Pendente'}</span>
-                        </div>
-
-                        <div class="order-card-body">
-                            <div class="customer-row">
-                                <div class="customer-name">👤 ${order.customerName || 'Cliente'}</div>
-                                <div class="customer-address">
-                                    ${order.isDelivery ? `🛵 <strong>Entrega:</strong> ${order.address || 'Endereço não informado'}` : '🏬 <strong>Retirada no Local</strong>'}
-                                </div>
-                                ${order.isCondominio ? `<div style="font-size:0.75rem; color:var(--gold); margin-top:2px;">🏢 Condomínio (+ R$ 2,00)</div>` : ''}
-                            </div>
-
-                            <ul class="order-items-list">
-                                ${itemsHTML}
-                            </ul>
-                        </div>
-
-                        <div class="order-card-totals">
-                            <div style="display:flex; justify-content:space-between; color:#AAA;">
-                                <span>Subtotal: R$ ${(order.subtotal || 0).toFixed(2).replace('.', ',')}</span>
-                                ${order.isDelivery ? `<span>Frete: R$ ${(order.deliveryFee || 0).toFixed(2).replace('.', ',')}</span>` : ''}
-                            </div>
-                            <div class="order-total-line">
-                                <span>Total:</span>
-                                <span>R$ ${(order.total || 0).toFixed(2).replace('.', ',')}</span>
-                            </div>
-                            <div style="font-size:0.75rem; color:#BBB; margin-top:4px;">
-                                💳 Pagamento: <strong>${order.paymentMethod || 'Pagar na Entrega'}</strong>
-                                ${order.receiptUrl ? ` &bull; <a href="${order.receiptUrl}" target="_blank" style="color:var(--gold);">📎 Ver Comprovante</a>` : ''}
-                            </div>
-                        </div>
-
-                        <div class="order-card-actions">
-                            ${nextStatusBtn}
-                            <button class="action-btn btn-print" onclick="printThermalReceipt(${order.id})" title="Imprimir Comanda">
-                                🖨️
-                            </button>
-                            <button class="action-btn btn-wa-msg" onclick="sendCustomerStatusWA(${order.id})" title="Avisar no WhatsApp">
-                                💬 WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function getNextStatusButton(order) {
-            if (order.status === 'Pendente') {
-                return `<button class="action-btn btn-status-next" onclick="updateOrderStatus(${order.id}, 'Em Preparo')">🍳 Iniciar Preparo</button>`;
-            } else if (order.status === 'Em Preparo') {
-                return `<button class="action-btn btn-status-next" onclick="updateOrderStatus(${order.id}, 'Saiu para Entrega')">🛵 Despachar</button>`;
-            } else if (order.status === 'Saiu para Entrega') {
-                return `<button class="action-btn btn-status-next" onclick="updateOrderStatus(${order.id}, 'Concluído')">✓ Concluir</button>`;
-            } else {
-                return `<button class="action-btn" style="background:#333; color:#AAA;" disabled>✓ Finalizado</button>`;
-            }
-        }
-
-        function updateOrderStatus(orderId, newStatus) {
-            ordersState = ordersState.map(o => {
-                if (o.id === orderId) {
-                    return { ...o, status: newStatus };
-                }
-                return o;
-            });
-            localStorage.setItem('brimo_orders', JSON.stringify(ordersState));
-            renderOrders(currentFilter);
-            renderKPIS();
-            showToast(`Status do pedido #${orderId} atualizado para ${newStatus}!`);
-        }
-
-        function sendCustomerStatusWA(orderId) {
-            const order = ordersState.find(o => o.id === orderId);
-            if (!order) return;
-            
-            let text = `Olá, *${order.customerName}*! Aqui é do *Brimo Comida Árabe* 🕌\n\n`;
-            if (order.status === 'Em Preparo') {
-                text += `👨‍🍳 Seu pedido *#${order.id}* já está sendo preparado com todo carinho pela nossa cozinha!\n⏱️ Previsão de saída: 20 a 35 minutos.`;
-            } else if (order.status === 'Saiu para Entrega') {
-                text += `🛵💨 Seu pedido *#${order.id}* acabou de sair para entrega!\nFique atento à portaria ou interfone. Bom apetite! 😋🌯`;
-            } else if (order.status === 'Concluído') {
-                text += `✓ Seu pedido *#${order.id}* foi finalizado. Muito obrigado pela preferência e tenha uma excelente refeição! 🌟`;
-            } else {
-                text += `Recebemos seu pedido *#${order.id}* e já estamos organizando seu atendimento! 🔥`;
-            }
-
-            const cleanPhone = (order.customerPhone || '').replace(/\D/g, '');
-            const waUrl = cleanPhone ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`;
-            window.open(waUrl, '_blank');
-        }
-
-        function printThermalReceipt(orderId) {
-            const order = ordersState.find(o => o.id === orderId);
-            if (!order) return;
-
-            const printArea = document.getElementById('print-receipt-area');
-            const itemsText = (order.items || []).map(i => `
-                1x ${i.name.padEnd(20, ' ')} R$ ${(i.price || 0).toFixed(2)}
-                ${i.removedIngredients && i.removedIngredients.length > 0 ? `   SEM: ${i.removedIngredients.join(', ')}` : ''}
-            `).join('\n');
-
-            printArea.innerHTML = `
-                <pre>
-================================
-     BRIMO COMIDA ARABE
-  R. D. Carmelita Gama, 385
-      São Benedito - Pinda
-================================
-PEDIDO: #${order.id}
-DATA:   ${order.time || new Date().toLocaleTimeString()}
-CLIENTE: ${order.customerName || 'Consumidor'}
---------------------------------
-${order.isDelivery ? `ENTREGA:\n${order.address || ''}\n${order.isCondominio ? 'CONDOMÍNIO (+ R$ 2,00)' : ''}` : 'RETIRADA NO LOCAL'}
---------------------------------
-ITENS:
-${itemsText}
---------------------------------
-SUBTOTAL:   R$ ${(order.subtotal || 0).toFixed(2)}
-FRETE:      R$ ${(order.deliveryFee || 0).toFixed(2)}
-TOTAL:      R$ ${(order.total || 0).toFixed(2)}
-PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
-================================
-     OBRIGADO PELA PREFERENCIA!
-================================
-                </pre>
-            `;
-            window.print();
-        }
-
-        function clearAllOrders() {
-            if (confirm("Deseja realmente limpar todos os pedidos do histórico?")) {
-                ordersState = [];
-                localStorage.setItem('brimo_orders', JSON.stringify([]));
-                renderOrders('all');
-                renderKPIS();
-                showToast("Histórico de pedidos limpo com sucesso.");
-            }
-        }
-
-        /* === PRODUCTS MANAGEMENT === */
-        function renderProducts() {
-            const container = document.getElementById('products-container');
-            if (!container) return;
-
-            container.innerHTML = productsState.map(p => `
+            container.innerHTML = filtered.map(p => `
                 <div class="product-edit-card ${p.active ? '' : 'disabled'}" id="prod-card-${p.id}">
                     <div class="prod-img-box">
                         <img src="${p.img}" class="prod-img" alt="${p.name}">
@@ -1602,8 +1532,19 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
                     </div>
 
                     <div class="prod-edit-body">
-                        <div class="prod-name">${p.name}</div>
+                        <!-- Edição do Nome do Item -->
+                        <div class="edit-field-group">
+                            <label class="edit-field-label">Nome do Prato / Lanche:</label>
+                            <input type="text" class="input-title-edit" value="${p.name}" onchange="updateProductName(${p.id}, this.value)" placeholder="Nome do item">
+                        </div>
+
+                        <!-- Edição da Descrição / Ingredientes -->
+                        <div class="edit-field-group">
+                            <label class="edit-field-label">Descrição & Ingredientes:</label>
+                            <textarea class="textarea-desc-edit" onchange="updateProductDesc(${p.id}, this.value)" placeholder="Descreva os ingredientes...">${p.desc || ''}</textarea>
+                        </div>
                         
+                        <!-- Preço e Disponibilidade -->
                         <div class="prod-price-row">
                             <div class="price-input-group">
                                 <span>R$</span>
@@ -1625,6 +1566,26 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
             `).join('');
         }
 
+        function updateProductName(id, newName) {
+            productsState = productsState.map(p => {
+                if (p.id === id) {
+                    return { ...p, name: newName.trim() || p.name };
+                }
+                return p;
+            });
+            saveProductsState();
+        }
+
+        function updateProductDesc(id, newDesc) {
+            productsState = productsState.map(p => {
+                if (p.id === id) {
+                    return { ...p, desc: newDesc.trim() };
+                }
+                return p;
+            });
+            saveProductsState();
+        }
+
         function updateProductPrice(id, newPrice) {
             productsState = productsState.map(p => {
                 if (p.id === id) {
@@ -1643,12 +1604,13 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
                 return p;
             });
             renderProducts();
+            renderKPIS();
             saveProductsState();
         }
 
         function saveProductsState() {
             localStorage.setItem('brimo_products', JSON.stringify(productsState));
-            showToast("✓ Cardápio e preços atualizados no site!");
+            showToast("✓ Textos, preços e cardápio salvos com sucesso!");
         }
 
         /* === BAIRROS & FRETE TABLE === */
@@ -1691,7 +1653,8 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
             storeConfig.condominioFee = parseFloat(condInput.value) || 2.00;
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('brimo_delivery_bairros', JSON.stringify(bairrosState));
-            showToast("✓ Taxas de entrega dos bairros salvas com sucesso!");
+            renderKPIS();
+            showToast("✓ Taxas de entrega e condomínio salvas!");
         }
 
         /* === SETTINGS MANAGEMENT === */
@@ -1713,11 +1676,12 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
             storeConfig.prepTime = document.getElementById('cfg-prep-time').value.trim();
 
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+            renderKPIS();
             showToast("✓ Configurações da loja salvas!");
         }
 
         function resetToDefaults() {
-            if (confirm("Deseja redefinir todas as configurações, preços e taxas para o padrão original?")) {
+            if (confirm("Deseja redefinir todas as configurações, textos, preços e taxas para o padrão original?")) {
                 localStorage.removeItem('brimo_products');
                 localStorage.removeItem('brimo_delivery_bairros');
                 localStorage.removeItem('brimo_store_config');
@@ -1737,15 +1701,6 @@ PAGAMENTO:  ${order.paymentMethod || 'Pagar na Entrega'}
                 toast.style.display = 'none';
             }, 3000);
         }
-
-        // Live refresh when an order is created on index.html in another tab
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'brimo_orders') {
-                renderOrders(currentFilter);
-                renderKPIS();
-                showToast("🔔 Novo pedido recebido!");
-            }
-        });
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', checkAuth);
