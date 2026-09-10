@@ -2326,7 +2326,7 @@
 
         <div class="legal-box">
             <p>BRIMO COMIDA ARABE LTDA | CNPJ: 45.892.123/0001-90</p>
-            <p>© 2026 BRIMO Comida Árabe. Todos os direitos reservados. | <a href="termos.html">Termos de Uso</a> | <a href="privacidade.html">Política de Privacidade</a></p>
+            <p>© 2026 BRIMO Comida Árabe. Todos os direitos reservados. | <a href="termos.html">Termos de Uso</a> | <a href="privacidade.html">Política de Privacidade</a> | <a href="admin.html" style="color: #666; text-decoration: none;" title="Acesso Administrativo">🔒 Admin</a></p>
         </div>
     </footer>
 
@@ -2393,11 +2393,97 @@
             }
         }
 
+        function checkStoreStatusBanner() {
+            try {
+                const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+                if (savedStoreConfig.isOpen === false) {
+                    let banner = document.getElementById('store-closed-banner');
+                    if (!banner) {
+                        banner = document.createElement('div');
+                        banner.id = 'store-closed-banner';
+                        banner.style.cssText = 'background: #9D0208; color: #FFF; text-align: center; padding: 10px 16px; font-size: 0.88rem; font-weight: 700; position: sticky; top: 0; z-index: 999; border-bottom: 2px solid #FFBA08; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                        banner.innerHTML = `🔴 <strong>AVISO:</strong> ${savedStoreConfig.closedMsg || 'No momento nossa cozinha está fechada. Você pode montar seu pedido e agendar!'}`;
+                        document.body.insertBefore(banner, document.body.firstChild);
+                    }
+                } else {
+                    const existingBanner = document.getElementById('store-closed-banner');
+                    if (existingBanner) existingBanner.remove();
+                }
+            } catch (e) {
+                console.error("Erro ao verificar status da loja:", e);
+            }
+        }
+
+        function syncAdminConfig() {
+            checkStoreStatusBanner();
+
+            try {
+                const savedProducts = JSON.parse(localStorage.getItem('brimo_products'));
+                if (savedProducts && Array.isArray(savedProducts)) {
+                    savedProducts.forEach(p => {
+                        MENU_PRICES[p.name] = p.price;
+
+                        const allCards = document.querySelectorAll('.card');
+                        allCards.forEach(card => {
+                            const titleEl = card.querySelector('.card-title');
+                            const priceEl = card.querySelector('.card-price');
+                            const btnEl = card.querySelector('.add-btn');
+
+                            if (titleEl && titleEl.innerText.trim() === p.name) {
+                                if (priceEl) {
+                                    const pfCheckbox = card.querySelector('.pao-folha-opt input[type="checkbox"]');
+                                    const isPf = pfCheckbox && pfCheckbox.checked;
+                                    priceEl.innerText = `R$ ${(p.price + (isPf ? 10 : 0)).toFixed(2).replace('.', ',')}`;
+                                }
+
+                                if (!p.active) {
+                                    card.style.opacity = '0.55';
+                                    if (btnEl) {
+                                        btnEl.innerText = 'Esgotado por Hoje';
+                                        btnEl.disabled = true;
+                                        btnEl.style.background = '#333';
+                                        btnEl.style.cursor = 'not-allowed';
+                                    }
+                                } else {
+                                    card.style.opacity = '1';
+                                    if (btnEl && btnEl.innerText === 'Esgotado por Hoje') {
+                                        btnEl.innerText = 'Adicionar ao Pedido';
+                                        btnEl.disabled = false;
+                                        btnEl.style.background = '';
+                                        btnEl.style.cursor = 'pointer';
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
+
+                const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config'));
+                if (savedCfg && savedCfg.pixKey) {
+                    const pixCodeEl = document.querySelector('.pix-key-code');
+                    if (pixCodeEl) pixCodeEl.innerText = savedCfg.pixKey;
+                }
+            } catch (e) {
+                console.error("Erro ao sincronizar produtos:", e);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            syncAdminConfig();
             syncCartPrices();
             updateCartUI();
             initSlider();
             initScrollRevealDeck();
+        });
+
+        // Sincroniza em tempo real se o admin mudar dados em outra aba
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'brimo_products' || e.key === 'brimo_store_config' || e.key === 'brimo_delivery_bairros') {
+                syncAdminConfig();
+                syncCartPrices();
+                updateCartUI();
+                if (typeof updateModalTotals === 'function') updateModalTotals();
+            }
         });
 
         function saveCart() {
@@ -2713,7 +2799,9 @@
             const streetInput = document.getElementById('cust-street');
             const chkCondominio = document.getElementById('chk-condominio');
             const isCondominio = chkCondominio && chkCondominio.checked;
-            const extraCondominio = isCondominio ? CONDOMINIO_EXTRA_FEE : 0;
+            
+            const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            const extraCondominio = isCondominio ? (savedCfg.condominioFee || CONDOMINIO_EXTRA_FEE) : 0;
             
             const rawBairro = bairroInput ? bairroInput.value.trim() : '';
             const rawStreet = streetInput ? streetInput.value.trim() : '';
@@ -2721,18 +2809,20 @@
             const normBairro = normalizeText(rawBairro);
             const normStreet = normalizeText(rawStreet);
 
+            const activeBairros = JSON.parse(localStorage.getItem('brimo_delivery_bairros')) || DELIVERY_BAIRROS;
+
             let baseFee = 6.00;
 
             if (normBairro) {
-                if (DELIVERY_BAIRROS[normBairro]) {
-                    baseFee = DELIVERY_BAIRROS[normBairro].preco;
+                if (activeBairros[normBairro]) {
+                    baseFee = activeBairros[normBairro].preco;
                     currentDeliveryBairroName = rawBairro;
-                    currentDeliveryDistanceKm = DELIVERY_BAIRROS[normBairro].km;
+                    currentDeliveryDistanceKm = activeBairros[normBairro].km;
                     currentDeliveryFee = baseFee + extraCondominio;
                     return currentDeliveryFee;
                 }
                 
-                for (const [key, info] of Object.entries(DELIVERY_BAIRROS)) {
+                for (const [key, info] of Object.entries(activeBairros)) {
                     if (normBairro === key || normBairro.includes(key) || key.includes(normBairro)) {
                         baseFee = info.preco;
                         currentDeliveryBairroName = rawBairro;
@@ -3425,7 +3515,9 @@
             }
 
             if (isPix) {
-                msg += `\n💳 *Forma de Pagamento:* PIX (Chave CNPJ: 55.574.702/0001-70)\n`;
+                const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+                const pixKey = savedCfg.pixKey || "55.574.702/0001-70";
+                msg += `\n💳 *Forma de Pagamento:* PIX (Chave CNPJ: ${pixKey})\n`;
                 if (attachedReceiptUrl) {
                     msg += `📎 *Link do Comprovante:* ${attachedReceiptUrl}\n`;
                 } else if (attachedReceiptName) {
@@ -3439,8 +3531,44 @@
 
             msg += `\n_Pedido realizado via Site Brimo Comida Árabe_`;
 
+            // Salva pedido no histórico local para o Painel de Administração / Cozinha
+            try {
+                const finalDeliveryFee = isDelivery ? getDynamicDeliveryFee() : 0;
+                const finalTotal = isDelivery ? (subtotal + finalDeliveryFee) : subtotal;
+                const isCondominio = isDelivery && document.getElementById('chk-condominio') && document.getElementById('chk-condominio').checked;
+                
+                const newOrderRecord = {
+                    id: Math.floor(1000 + Math.random() * 9000),
+                    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    customerName: isDelivery ? customerName : "Cliente (Retirada)",
+                    customerPhone: "",
+                    isDelivery: isDelivery,
+                    address: isDelivery ? `${customerStreet}, Nº ${customerNum}${customerComp ? ` (${customerComp})` : ''} - ${customerBairro}` : "Retirada no Local",
+                    isCondominio: isCondominio,
+                    items: cart.map(i => ({
+                        name: i.name,
+                        price: i.price,
+                        removedIngredients: i.removedIngredients || []
+                    })),
+                    subtotal: subtotal,
+                    deliveryFee: finalDeliveryFee,
+                    total: finalTotal,
+                    paymentMethod: isPix ? "PIX" : "Pagar na Entrega/Retirada",
+                    receiptUrl: attachedReceiptUrl || "",
+                    status: "Pendente"
+                };
+
+                const currentOrders = JSON.parse(localStorage.getItem('brimo_orders')) || [];
+                currentOrders.unshift(newOrderRecord);
+                localStorage.setItem('brimo_orders', JSON.stringify(currentOrders));
+            } catch (err) {
+                console.error("Erro ao salvar pedido no histórico:", err);
+            }
+
+            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            const waNumber = savedStoreConfig.whatsapp || "5512992424864";
             const encodedMsg = encodeURIComponent(msg);
-            window.open(`https://wa.me/5512992424864?text=${encodedMsg}`, '_blank');
+            window.open(`https://wa.me/${waNumber}?text=${encodedMsg}`, '_blank');
             closeModal();
         }
     </script>
