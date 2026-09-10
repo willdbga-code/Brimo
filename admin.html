@@ -600,6 +600,79 @@
             transform: translateX(20px);
         }
 
+        /* === PÃO FOLHA CONTROLS === */
+        .pao-folha-admin-banner {
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.12), rgba(255, 186, 8, 0.08));
+            border: 1.5px solid rgba(255, 186, 8, 0.35);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .pao-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .pao-badge-icon {
+            font-size: 2rem;
+            background: rgba(255, 186, 8, 0.15);
+            padding: 10px;
+            border-radius: 10px;
+            line-height: 1;
+            border: 1px solid rgba(255, 186, 8, 0.3);
+        }
+
+        .pao-banner-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-toggle-pao {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-toggle-pao.active {
+            background: var(--green);
+            color: #111;
+            box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-toggle-pao.inactive {
+            background: var(--danger);
+            color: #FFF;
+            box-shadow: 0 0 12px rgba(255, 77, 77, 0.4);
+        }
+
+        .prod-pao-folha-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 186, 8, 0.05);
+            border: 1px solid rgba(255, 186, 8, 0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+
         /* === BAIRROS & FRETE EDITOR === */
         .frete-config-box {
             background: var(--card-bg);
@@ -874,6 +947,14 @@
                     </div>
                 </div>
 
+                <div class="kpi-card" style="cursor: pointer;" onclick="togglePaoFolhaGlobal()" title="Clique para Ativar ou Desativar o Pão Folha no Cardápio">
+                    <div class="kpi-icon">🥖</div>
+                    <div class="kpi-info">
+                        <h4>Pão Folha (+ R$ 10)</h4>
+                        <div class="kpi-value" id="kpi-pao-folha-val" style="font-size: 1.3rem;">Ativado</div>
+                    </div>
+                </div>
+
                 <div class="kpi-card">
                     <div class="kpi-icon">🛵</div>
                     <div class="kpi-info">
@@ -918,6 +999,26 @@
                     <button class="btn-save-master" onclick="saveProductsState()">
                         💾 Salvar Todas as Alterações
                     </button>
+                </div>
+
+                <!-- BANNER DE CONTROLE DO PÃO FOLHA -->
+                <div class="pao-folha-admin-banner">
+                    <div class="pao-banner-left">
+                        <div class="pao-badge-icon">🥖</div>
+                        <div>
+                            <h4 style="color:var(--gold); font-size:1rem; font-weight:800; margin-bottom:2px;">Disponibilidade Geral de Pão Folha</h4>
+                            <p style="color:#BBB; font-size:0.8rem;">Ative ou desative a caixinha de opção de Pão Folha nos lanches do cardápio com 1 clique.</p>
+                        </div>
+                    </div>
+                    <div class="pao-banner-right">
+                        <div class="price-input-group" style="align-items:center;">
+                            <span style="font-size:0.8rem; color:#CCC; font-weight:700;">Adicional: R$</span>
+                            <input type="number" id="pao-folha-price-input" step="1.00" value="10.00" style="width:80px; padding:7px 10px; background:#0d0d0d; border:1.5px solid rgba(255,186,8,0.4); border-radius:8px; color:#fff; font-weight:800; font-size:0.95rem;" onchange="updatePaoFolhaPrice(this.value)">
+                        </div>
+                        <button type="button" class="btn-toggle-pao active" id="btn-toggle-pao" onclick="togglePaoFolhaGlobal()">
+                            <span id="btn-toggle-pao-icon">✓</span> <span id="btn-toggle-pao-text">Pão Folha Ativado</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="search-box-bar">
@@ -991,6 +1092,23 @@
                 </div>
 
                 <div class="settings-card">
+                    <h3 class="settings-title">🥖 Opção de Pão Folha (Adicional no Cardápio)</h3>
+                    <div class="form-grid-2">
+                        <div class="setting-group">
+                            <label>Status do Pão Folha no Site:</label>
+                            <select id="cfg-pao-folha-active" class="input-title-edit" style="height: 48px; background: #121212;">
+                                <option value="true">🟢 Ativado (Clientes podem escolher Pão Folha)</option>
+                                <option value="false">🔴 Esgotado / Desativado (Ocultar seleção no site)</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label>Valor Adicional do Pão Folha (R$):</label>
+                            <input type="number" id="cfg-pao-folha-price" step="0.50" value="10.00" placeholder="Ex: 10.00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
                     <h3 class="settings-title">🕌 Informações da Loja</h3>
                     <div class="setting-group">
                         <label>Mensagem / Aviso Quando a Loja Estiver Fechada:</label>
@@ -1041,6 +1159,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Shawerma Carne.jpg", 
                 desc: "Pão Sírio, tiras suculentas de carne, tomate, cebola, salsinha fresca, molho de tahine e pasta de alho artesanal.",
+                hasPaoFolha: true,
                 active: true 
             },
             { 
@@ -1050,6 +1169,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Shawerma de Frango.jpg", 
                 desc: "Pão Sírio, frango selecionado, batata frita crocante e nossa pasta de alho artesanal irresistível (Opção com Alface).",
+                hasPaoFolha: true,
                 active: true 
             },
             { 
@@ -1059,6 +1179,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Shawerma Misto.jpg", 
                 desc: "Pão Sírio, combinação perfeita de carne e frango, tomate, cebola, alface crocante, batata frita e pasta de alho.",
+                hasPaoFolha: true,
                 active: true 
             },
             { 
@@ -1068,6 +1189,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Shawerma de kafka.jpg", 
                 desc: "Pão Sírio, kafta suculenta grelhada, tomate, cebola, salsinha e creme de alho com molho tahine especial.",
+                hasPaoFolha: true,
                 active: true 
             },
             { 
@@ -1077,6 +1199,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Shawerma Vegetariano.jpg", 
                 desc: "Pão Sírio, bolinhos de falafel crocantes, tomate, alface, salsinha, hortelã, rabanete, picles e molho de tahine.",
+                hasPaoFolha: true,
                 active: true 
             },
             { 
@@ -1086,6 +1209,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Arayes.jpg", 
                 desc: "Pão Sírio tostado na prensa recheado com carne temperada suculenta. Crocante por fora e macio por dentro.",
+                hasPaoFolha: false,
                 active: true 
             },
             { 
@@ -1095,6 +1219,7 @@
                 category: "Shawarmas & Lanches", 
                 img: "Fotos/Lanche Batata Frita.jpg", 
                 desc: "Pão Sírio recheado com batata frita crocante, creme de alho intenso, picles artesanal e salada especial.",
+                hasPaoFolha: true,
                 active: true 
             },
             
@@ -1369,12 +1494,13 @@
         /* === STATE INITIALIZATION === */
         let productsState = JSON.parse(localStorage.getItem('brimo_products')) || DEFAULT_PRODUCTS;
         
-        // Garante que cada produto possua campo de descrição
+        // Garante que cada produto possua campo de descrição e flag hasPaoFolha
         productsState = productsState.map(p => {
             const defaultItem = DEFAULT_PRODUCTS.find(d => d.id === p.id);
             return {
                 ...p,
-                desc: p.desc || (defaultItem ? defaultItem.desc : "")
+                desc: p.desc || (defaultItem ? defaultItem.desc : ""),
+                hasPaoFolha: p.hasPaoFolha !== undefined ? p.hasPaoFolha : (defaultItem ? defaultItem.hasPaoFolha : false)
             };
         });
 
@@ -1383,11 +1509,16 @@
             whatsapp: "5512992424864",
             pixKey: "55.574.702/0001-70",
             condominioFee: 2.00,
+            paoFolhaActive: true,
+            paoFolhaPrice: 10.00,
             closedMsg: "No momento nossa cozinha está fechada. Você pode montar seu pedido e agendar!",
             openingHours: "Terça a Domingo das 18h às 23h30",
             prepTime: "30 a 50 minutos",
             isOpen: true
         };
+
+        if (storeConfig.paoFolhaActive === undefined) storeConfig.paoFolhaActive = true;
+        if (storeConfig.paoFolhaPrice === undefined) storeConfig.paoFolhaPrice = 10.00;
 
         /* === AUTHENTICATION LOGIC === */
         function checkAuth() {
@@ -1431,6 +1562,7 @@
         /* === INITIALIZE DASHBOARD === */
         function initDashboard() {
             renderStoreStatus();
+            renderPaoFolhaControls();
             renderKPIS();
             renderProducts();
             renderBairrosTable();
@@ -1474,10 +1606,73 @@
             document.getElementById('kpi-active-items').innerText = productsState.filter(p => p.active).length;
             document.getElementById('kpi-total-bairros').innerText = Object.keys(bairrosState).length;
             document.getElementById('kpi-condominio-val').innerText = `R$ ${(storeConfig.condominioFee || 2.00).toFixed(2).replace('.', ',')}`;
+            
+            const kpiPf = document.getElementById('kpi-pao-folha-val');
+            if (kpiPf) {
+                const isPfActive = storeConfig.paoFolhaActive !== false;
+                const pfPrice = storeConfig.paoFolhaPrice || 10.00;
+                kpiPf.innerText = isPfActive ? `Ativado (+R$ ${pfPrice.toFixed(0)})` : 'Esgotado';
+                kpiPf.style.color = isPfActive ? 'var(--green)' : 'var(--danger)';
+            }
         }
 
         function updateCondominioKPI(val) {
             document.getElementById('kpi-condominio-val').innerText = `R$ ${(parseFloat(val) || 2.00).toFixed(2).replace('.', ',')}`;
+        }
+
+        /* === PÃO FOLHA CONTROLS === */
+        function togglePaoFolhaGlobal() {
+            storeConfig.paoFolhaActive = !storeConfig.paoFolhaActive;
+            localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+            renderPaoFolhaControls();
+            renderKPIS();
+            renderProducts();
+            showToast(storeConfig.paoFolhaActive ? "🥖 Opção de Pão Folha ATIVADA no site!" : "🥖 Opção de Pão Folha PAUSADA / ESGOTADA no site!");
+        }
+
+        function updatePaoFolhaPrice(newPrice) {
+            storeConfig.paoFolhaPrice = parseFloat(newPrice) || 10.00;
+            localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+            renderPaoFolhaControls();
+            renderKPIS();
+            renderProducts();
+            showToast(`✓ Valor do Pão Folha atualizado para R$ ${storeConfig.paoFolhaPrice.toFixed(2).replace('.', ',')}!`);
+        }
+
+        function toggleProductPaoFolha(id, hasPf) {
+            productsState = productsState.map(p => {
+                if (p.id === id) {
+                    return { ...p, hasPaoFolha: hasPf };
+                }
+                return p;
+            });
+            saveProductsState();
+        }
+
+        function renderPaoFolhaControls() {
+            const btn = document.getElementById('btn-toggle-pao');
+            const icon = document.getElementById('btn-toggle-pao-icon');
+            const text = document.getElementById('btn-toggle-pao-text');
+            const priceInput = document.getElementById('pao-folha-price-input');
+
+            const isActive = storeConfig.paoFolhaActive !== false;
+            const price = storeConfig.paoFolhaPrice || 10.00;
+
+            if (btn) {
+                if (isActive) {
+                    btn.className = 'btn-toggle-pao active';
+                    if (icon) icon.innerText = '✓';
+                    if (text) text.innerText = 'Pão Folha Ativado';
+                } else {
+                    btn.className = 'btn-toggle-pao inactive';
+                    if (icon) icon.innerText = '✕';
+                    if (text) text.innerText = 'Pão Folha Esgotado';
+                }
+            }
+
+            if (priceInput) {
+                priceInput.value = price.toFixed(2);
+            }
         }
 
         /* === PRODUCTS & TEXTS MANAGEMENT === */
@@ -1524,7 +1719,20 @@
                 return;
             }
 
-            container.innerHTML = filtered.map(p => `
+            container.innerHTML = filtered.map(p => {
+                const isLanche = p.category === 'Shawarmas & Lanches';
+                const hasPf = p.hasPaoFolha !== false;
+                const paoFolhaRow = isLanche ? `
+                    <div class="prod-pao-folha-row">
+                        <span style="font-size:0.75rem; color:#DDD; font-weight:700;">🥖 Permite Pão Folha (+ R$ ${(storeConfig.paoFolhaPrice || 10).toFixed(2).replace('.', ',')}):</span>
+                        <label class="switch" style="width:38px; height:20px;">
+                            <input type="checkbox" ${hasPf ? 'checked' : ''} onchange="toggleProductPaoFolha(${p.id}, this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                ` : '';
+
+                return `
                 <div class="product-edit-card ${p.active ? '' : 'disabled'}" id="prod-card-${p.id}">
                     <div class="prod-img-box">
                         <img src="${p.img}" class="prod-img" alt="${p.name}">
@@ -1543,6 +1751,9 @@
                             <label class="edit-field-label">Descrição & Ingredientes:</label>
                             <textarea class="textarea-desc-edit" onchange="updateProductDesc(${p.id}, this.value)" placeholder="Descreva os ingredientes...">${p.desc || ''}</textarea>
                         </div>
+
+                        <!-- Opção de Pão Folha para Lanches -->
+                        ${paoFolhaRow}
                         
                         <!-- Preço e Disponibilidade -->
                         <div class="prod-price-row">
@@ -1563,7 +1774,8 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function updateProductName(id, newName) {
@@ -1665,6 +1877,15 @@
             document.getElementById('cfg-closed-msg').value = storeConfig.closedMsg || "";
             document.getElementById('cfg-opening-hours').value = storeConfig.openingHours || "";
             document.getElementById('cfg-prep-time').value = storeConfig.prepTime || "";
+            
+            const paoActiveSelect = document.getElementById('cfg-pao-folha-active');
+            if (paoActiveSelect) {
+                paoActiveSelect.value = (storeConfig.paoFolhaActive !== false) ? 'true' : 'false';
+            }
+            const paoPriceInput = document.getElementById('cfg-pao-folha-price');
+            if (paoPriceInput) {
+                paoPriceInput.value = (storeConfig.paoFolhaPrice || 10.00).toFixed(2);
+            }
         }
 
         function saveSettings() {
@@ -1674,9 +1895,20 @@
             storeConfig.closedMsg = document.getElementById('cfg-closed-msg').value.trim();
             storeConfig.openingHours = document.getElementById('cfg-opening-hours').value.trim();
             storeConfig.prepTime = document.getElementById('cfg-prep-time').value.trim();
+            
+            const paoActiveSelect = document.getElementById('cfg-pao-folha-active');
+            if (paoActiveSelect) {
+                storeConfig.paoFolhaActive = paoActiveSelect.value === 'true';
+            }
+            const paoPriceInput = document.getElementById('cfg-pao-folha-price');
+            if (paoPriceInput) {
+                storeConfig.paoFolhaPrice = parseFloat(paoPriceInput.value) || 10.00;
+            }
 
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+            renderPaoFolhaControls();
             renderKPIS();
+            renderProducts();
             showToast("✓ Configurações da loja salvas!");
         }
 

@@ -2371,13 +2371,26 @@
             'Caixa Mix Doce Árabe (12 un)': 30
         };
 
+        function getPaoFolhaConfig() {
+            try {
+                const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+                return {
+                    active: savedCfg.paoFolhaActive !== false, // default true
+                    price: typeof savedCfg.paoFolhaPrice === 'number' ? savedCfg.paoFolhaPrice : 10.00
+                };
+            } catch (e) {
+                return { active: true, price: 10.00 };
+            }
+        }
+
         function syncCartPrices() {
+            const paoFolhaCfg = getPaoFolhaConfig();
             let changed = false;
             cart.forEach(item => {
                 const isPaoFolha = item.name.includes('(no Pão Folha)');
                 const baseName = item.name.replace(/\s*\([^)]*\)/g, '').trim();
                 if (MENU_PRICES[baseName] !== undefined) {
-                    const expectedPrice = MENU_PRICES[baseName] + (isPaoFolha ? 10 : 0);
+                    const expectedPrice = MENU_PRICES[baseName] + (isPaoFolha ? paoFolhaCfg.price : 0);
                     if (item.price !== expectedPrice) {
                         item.price = expectedPrice;
                         changed = true;
@@ -2416,6 +2429,7 @@
 
         function syncAdminConfig() {
             checkStoreStatusBanner();
+            const paoFolhaCfg = getPaoFolhaConfig();
 
             try {
                 const savedProducts = JSON.parse(localStorage.getItem('brimo_products'));
@@ -2429,6 +2443,7 @@
                             const descEl = card.querySelector('.card-desc');
                             const priceEl = card.querySelector('.card-price');
                             const btnEl = card.querySelector('.add-btn');
+                            const paoFolhaOpt = card.querySelector('.pao-folha-opt');
 
                             if (titleEl && p.name) {
                                 titleEl.innerText = p.name;
@@ -2438,14 +2453,32 @@
                                 descEl.innerText = p.desc;
                             }
 
+                            // Controla exibição e valor da opção Pão Folha
+                            const canHavePaoFolha = p.hasPaoFolha !== false;
+                            const showPaoFolha = paoFolhaCfg.active && canHavePaoFolha;
+
+                            if (paoFolhaOpt) {
+                                if (showPaoFolha) {
+                                    paoFolhaOpt.style.display = 'flex';
+                                    const pfLabel = paoFolhaOpt.querySelector('label');
+                                    if (pfLabel) {
+                                        pfLabel.innerText = `+ No Pão Folha (+ R$ ${paoFolhaCfg.price.toFixed(2).replace('.', ',')})`;
+                                    }
+                                } else {
+                                    paoFolhaOpt.style.display = 'none';
+                                    const pfChk = paoFolhaOpt.querySelector('input[type="checkbox"]');
+                                    if (pfChk) pfChk.checked = false;
+                                }
+                            }
+
                             if (priceEl && p.price !== undefined) {
                                 const pfCheckbox = card.querySelector('.pao-folha-opt input[type="checkbox"]');
-                                const isPf = pfCheckbox && pfCheckbox.checked;
-                                priceEl.innerText = `R$ ${(p.price + (isPf ? 10 : 0)).toFixed(2).replace('.', ',')}`;
+                                const isPf = showPaoFolha && pfCheckbox && pfCheckbox.checked;
+                                priceEl.innerText = `R$ ${(p.price + (isPf ? paoFolhaCfg.price : 0)).toFixed(2).replace('.', ',')}`;
                             }
 
                             if (btnEl) {
-                                const pfOpt = card.querySelector('.pao-folha-opt input[type="checkbox"]');
+                                const pfOpt = showPaoFolha ? card.querySelector('.pao-folha-opt input[type="checkbox"]') : null;
                                 const pfId = pfOpt ? `'${pfOpt.id}'` : 'null';
                                 const safeName = p.name.replace(/'/g, "\\'");
                                 btnEl.setAttribute('onclick', `addToCart(this, '${safeName}', ${p.price}, ${pfId})`);
@@ -2560,13 +2593,14 @@
             const cardContent = checkbox.closest('.card-content');
             const priceSpan = cardContent.querySelector('.card-price');
             const addBtn = cardContent.querySelector('.add-btn');
+            const paoFolhaCfg = getPaoFolhaConfig();
             
             // Pega preço base do onclick do botão
-            const basePriceMatch = addBtn.getAttribute('onclick').match(/(\d+)/g);
+            const basePriceMatch = addBtn.getAttribute('onclick').match(/,\s*(\d+(?:\.\d+)?)/);
             if (basePriceMatch) {
-                let basePrice = parseInt(basePriceMatch[0]);
-                if (checkbox.checked) {
-                    priceSpan.innerText = `R$ ${(basePrice + 10).toFixed(2).replace('.', ',')}`;
+                let basePrice = parseFloat(basePriceMatch[1]);
+                if (checkbox.checked && paoFolhaCfg.active) {
+                    priceSpan.innerText = `R$ ${(basePrice + paoFolhaCfg.price).toFixed(2).replace('.', ',')}`;
                 } else {
                     priceSpan.innerText = `R$ ${basePrice.toFixed(2).replace('.', ',')}`;
                 }
@@ -2634,13 +2668,14 @@
 
         /* === 5. ADICIONAR ITEM AO CARRINHO === */
         function addToCart(btnElement, itemName, basePrice, checkboxId = null) {
+            const paoFolhaCfg = getPaoFolhaConfig();
             let finalPrice = basePrice;
             let finalName = itemName;
 
-            if (checkboxId) {
+            if (checkboxId && paoFolhaCfg.active) {
                 const chk = document.getElementById(checkboxId);
                 if (chk && chk.checked) {
-                    finalPrice += 10;
+                    finalPrice += paoFolhaCfg.price;
                     finalName += " (no Pão Folha)";
                 }
             }
