@@ -2547,7 +2547,7 @@
             if (db) {
                 db.ref('brimo_data').on('value', (snapshot) => {
                     const data = snapshot.val();
-                    if (data) {
+                    if (data && typeof data === 'object' && !data.error) {
                         applyCloudData(data);
                     }
                 }, (err) => {
@@ -2563,7 +2563,7 @@
             try {
                 const res = await fetch('https://brimo-2e626-default-rtdb.firebaseio.com/brimo_data.json');
                 const data = await res.json();
-                if (data) {
+                if (data && typeof data === 'object' && !data.error) {
                     applyCloudData(data);
                 }
             } catch (err) {
@@ -2572,6 +2572,7 @@
         }
 
         function applyCloudData(data) {
+            if (!data || data.error) return;
             if (data.products && Array.isArray(data.products)) {
                 localStorage.setItem('brimo_products', JSON.stringify(data.products));
             }

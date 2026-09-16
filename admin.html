@@ -1553,7 +1553,7 @@
         }
 
         async function pushToFirebaseCloud() {
-            setCloudStatus('syncing');
+            setCloudStatus('syncing', 'Salvando na Nuvem...');
             const payload = {
                 products: productsState,
                 bairros: bairrosState,
@@ -1562,6 +1562,7 @@
             };
 
             let success = false;
+            let permissionError = false;
 
             // 1. Tenta via Firebase SDK
             if (db) {
@@ -1570,6 +1571,9 @@
                     success = true;
                 } catch (e) {
                     console.warn("Erro ao salvar via SDK, tentando REST:", e);
+                    if (e && (e.message || '').includes('PERMISSION_DENIED')) {
+                        permissionError = true;
+                    }
                 }
             }
 
@@ -1581,7 +1585,12 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    if (res.ok) success = true;
+                    const resData = await res.json().catch(() => ({}));
+                    if (res.ok && !resData.error) {
+                        success = true;
+                    } else if (resData.error && resData.error.toLowerCase().includes('permission denied')) {
+                        permissionError = true;
+                    }
                 } catch (err) {
                     console.error("Erro ao salvar no Firebase REST:", err);
                 }
@@ -1590,8 +1599,11 @@
             if (success) {
                 setCloudStatus('synced', 'Salvo para Todos!');
                 setTimeout(() => setCloudStatus('synced', 'Nuvem Conectada'), 3000);
+            } else if (permissionError) {
+                setCloudStatus('error', 'Sem Permissão (Regras do Firebase)');
+                showToast("⚠️ Firebase Bloqueado! Libere as Regras de Leitura/Escrita no Console do Firebase.");
             } else {
-                setCloudStatus('error', 'Salvo Localmente');
+                setCloudStatus('error', 'Salvo Localmente (Sem Nuvem)');
             }
             return success;
         }
@@ -1599,6 +1611,7 @@
         async function fetchFromFirebaseCloud() {
             setCloudStatus('syncing', 'Buscando Dados...');
             let data = null;
+            let permissionError = false;
 
             if (db) {
                 try {
@@ -1606,19 +1619,32 @@
                     data = snap.val();
                 } catch (e) {
                     console.warn("Erro ao buscar via Firebase SDK, tentando REST:", e);
+                    if (e && (e.message || '').includes('PERMISSION_DENIED')) {
+                        permissionError = true;
+                    }
                 }
             }
 
-            if (!data) {
+            if (!data && !permissionError) {
                 try {
                     const res = await fetch('https://brimo-2e626-default-rtdb.firebaseio.com/brimo_data.json');
-                    data = await res.json();
+                    const json = await res.json();
+                    if (json && !json.error) {
+                        data = json;
+                    } else if (json && json.error && json.error.toLowerCase().includes('permission denied')) {
+                        permissionError = true;
+                    }
                 } catch (err) {
                     console.warn("Erro ao buscar via Firebase REST:", err);
                 }
             }
 
-            if (data) {
+            if (permissionError) {
+                setCloudStatus('error', 'Sem Permissão (Regras do Firebase)');
+                return;
+            }
+
+            if (data && typeof data === 'object' && !data.error && (data.products || data.storeConfig)) {
                 if (data.products && Array.isArray(data.products)) {
                     productsState = data.products;
                     localStorage.setItem('brimo_products', JSON.stringify(productsState));
