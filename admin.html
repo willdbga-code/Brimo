@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:wght@400;500;600;700;800;900&family=Rye&display=swap" rel="stylesheet">
 
+    <!-- Firebase Realtime Database SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --orange: #E85D04;
@@ -912,6 +916,12 @@
             </a>
 
             <div class="topbar-actions">
+                <!-- Status da Nuvem Firebase -->
+                <div class="store-status-pill" id="cloud-status-pill" style="border-color: rgba(51, 204, 255, 0.4); background: rgba(51, 204, 255, 0.08);" title="Sincronização em tempo real na nuvem para todos os clientes">
+                    <span id="cloud-status-icon" style="font-size: 0.9rem;">☁️</span>
+                    <span class="status-text" id="cloud-status-text" style="color: #33CCFF; font-size: 0.78rem;">Nuvem Conectada</span>
+                </div>
+
                 <!-- Status Aberto/Fechado -->
                 <div class="store-status-pill" id="store-status-toggle" onclick="toggleStoreStatus()" title="Clique para Abrir ou Fechar a loja no site">
                     <div class="status-dot"></div>
@@ -1491,6 +1501,145 @@
             "moreira cesar": { nome: "Moreira César", preco: 14.00, km: 9.0 }
         };
 
+        /* === FIREBASE REALTIME DATABASE CONFIG (NUVEM GLOBAL) === */
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwziUPjwfovAcaUIkREpOTvpeRS5BvOLs",
+            authDomain: "brimo-2e626.firebaseapp.com",
+            databaseURL: "https://brimo-2e626-default-rtdb.firebaseio.com",
+            projectId: "brimo-2e626",
+            storageBucket: "brimo-2e626.firebasestorage.app",
+            messagingSenderId: "909276344387",
+            appId: "1:909276344387:web:496cbfbc434112eef964f6",
+            measurementId: "G-7G7L9NZVQH"
+        };
+
+        let db = null;
+        try {
+            if (typeof firebase !== 'undefined') {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.database();
+            }
+        } catch (e) {
+            console.warn("Erro ao iniciar Firebase no admin:", e);
+        }
+
+        function setCloudStatus(status, text) {
+            const pill = document.getElementById('cloud-status-pill');
+            const iconEl = document.getElementById('cloud-status-icon');
+            const textEl = document.getElementById('cloud-status-text');
+            if (!pill || !textEl) return;
+
+            if (status === 'syncing') {
+                pill.style.borderColor = 'rgba(255, 186, 8, 0.5)';
+                pill.style.background = 'rgba(255, 186, 8, 0.1)';
+                if (iconEl) iconEl.innerText = '⏳';
+                textEl.style.color = 'var(--gold)';
+                textEl.innerText = text || 'Salvando na Nuvem...';
+            } else if (status === 'synced') {
+                pill.style.borderColor = 'rgba(37, 211, 102, 0.5)';
+                pill.style.background = 'rgba(37, 211, 102, 0.1)';
+                if (iconEl) iconEl.innerText = '☁️';
+                textEl.style.color = 'var(--green)';
+                textEl.innerText = text || 'Nuvem Conectada';
+            } else if (status === 'error') {
+                pill.style.borderColor = 'rgba(255, 77, 77, 0.5)';
+                pill.style.background = 'rgba(255, 77, 77, 0.1)';
+                if (iconEl) iconEl.innerText = '⚠️';
+                textEl.style.color = 'var(--danger)';
+                textEl.innerText = text || 'Erro na Nuvem';
+            }
+        }
+
+        async function pushToFirebaseCloud() {
+            setCloudStatus('syncing');
+            const payload = {
+                products: productsState,
+                bairros: bairrosState,
+                storeConfig: storeConfig,
+                updatedAt: Date.now()
+            };
+
+            let success = false;
+
+            // 1. Tenta via Firebase SDK
+            if (db) {
+                try {
+                    await db.ref('brimo_data').set(payload);
+                    success = true;
+                } catch (e) {
+                    console.warn("Erro ao salvar via SDK, tentando REST:", e);
+                }
+            }
+
+            // 2. Fallback REST API
+            if (!success) {
+                try {
+                    const res = await fetch('https://brimo-2e626-default-rtdb.firebaseio.com/brimo_data.json', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) success = true;
+                } catch (err) {
+                    console.error("Erro ao salvar no Firebase REST:", err);
+                }
+            }
+
+            if (success) {
+                setCloudStatus('synced', 'Salvo para Todos!');
+                setTimeout(() => setCloudStatus('synced', 'Nuvem Conectada'), 3000);
+            } else {
+                setCloudStatus('error', 'Salvo Localmente');
+            }
+            return success;
+        }
+
+        async function fetchFromFirebaseCloud() {
+            setCloudStatus('syncing', 'Buscando Dados...');
+            let data = null;
+
+            if (db) {
+                try {
+                    const snap = await db.ref('brimo_data').once('value');
+                    data = snap.val();
+                } catch (e) {
+                    console.warn("Erro ao buscar via Firebase SDK, tentando REST:", e);
+                }
+            }
+
+            if (!data) {
+                try {
+                    const res = await fetch('https://brimo-2e626-default-rtdb.firebaseio.com/brimo_data.json');
+                    data = await res.json();
+                } catch (err) {
+                    console.warn("Erro ao buscar via Firebase REST:", err);
+                }
+            }
+
+            if (data) {
+                if (data.products && Array.isArray(data.products)) {
+                    productsState = data.products;
+                    localStorage.setItem('brimo_products', JSON.stringify(productsState));
+                }
+                if (data.bairros && typeof data.bairros === 'object') {
+                    bairrosState = data.bairros;
+                    localStorage.setItem('brimo_delivery_bairros', JSON.stringify(bairrosState));
+                }
+                if (data.storeConfig && typeof data.storeConfig === 'object') {
+                    storeConfig = { ...storeConfig, ...data.storeConfig };
+                    localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+                }
+                setCloudStatus('synced', 'Nuvem Conectada');
+                initDashboard();
+            } else {
+                // Primeira execução: publica estado padrão no Firebase
+                setCloudStatus('synced', 'Inicializando Nuvem...');
+                pushToFirebaseCloud();
+            }
+        }
+
         /* === STATE INITIALIZATION === */
         let productsState = JSON.parse(localStorage.getItem('brimo_products')) || DEFAULT_PRODUCTS;
         
@@ -1527,6 +1676,7 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 initDashboard();
+                fetchFromFirebaseCloud();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('admin-dashboard').style.display = 'none';
@@ -1545,6 +1695,7 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
                 initDashboard();
+                fetchFromFirebaseCloud();
                 showToast("✓ Bem-vindo ao Painel do Brimo!");
             } else {
                 errorMsg.style.display = 'block';
@@ -1574,7 +1725,8 @@
             storeConfig.isOpen = !storeConfig.isOpen;
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
             renderStoreStatus();
-            showToast(storeConfig.isOpen ? "🟢 Loja ABERTA no site!" : "🔴 Loja FECHADA no site!");
+            pushToFirebaseCloud();
+            showToast(storeConfig.isOpen ? "🟢 Loja ABERTA para todos os clientes!" : "🔴 Loja FECHADA para todos os clientes!");
         }
 
         function renderStoreStatus() {
@@ -1627,7 +1779,8 @@
             renderPaoFolhaControls();
             renderKPIS();
             renderProducts();
-            showToast(storeConfig.paoFolhaActive ? "🥖 Opção de Pão Folha ATIVADA no site!" : "🥖 Opção de Pão Folha PAUSADA / ESGOTADA no site!");
+            pushToFirebaseCloud();
+            showToast(storeConfig.paoFolhaActive ? "🥖 Opção de Pão Folha ATIVADA para todos os clientes!" : "🥖 Opção de Pão Folha PAUSADA / ESGOTADA para todos os clientes!");
         }
 
         function updatePaoFolhaPrice(newPrice) {
@@ -1636,7 +1789,8 @@
             renderPaoFolhaControls();
             renderKPIS();
             renderProducts();
-            showToast(`✓ Valor do Pão Folha atualizado para R$ ${storeConfig.paoFolhaPrice.toFixed(2).replace('.', ',')}!`);
+            pushToFirebaseCloud();
+            showToast(`✓ Valor do Pão Folha atualizado para R$ ${storeConfig.paoFolhaPrice.toFixed(2).replace('.', ',')} para todos!`);
         }
 
         function toggleProductPaoFolha(id, hasPf) {
@@ -1822,7 +1976,8 @@
 
         function saveProductsState() {
             localStorage.setItem('brimo_products', JSON.stringify(productsState));
-            showToast("✓ Textos, preços e cardápio salvos com sucesso!");
+            pushToFirebaseCloud();
+            showToast("✓ Cardápio salvo e sincronizado na Nuvem!");
         }
 
         /* === BAIRROS & FRETE TABLE === */
@@ -1866,7 +2021,8 @@
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
             localStorage.setItem('brimo_delivery_bairros', JSON.stringify(bairrosState));
             renderKPIS();
-            showToast("✓ Taxas de entrega e condomínio salvas!");
+            pushToFirebaseCloud();
+            showToast("✓ Taxas de entrega salvas e sincronizadas na Nuvem!");
         }
 
         /* === SETTINGS MANAGEMENT === */
@@ -1909,14 +2065,29 @@
             renderPaoFolhaControls();
             renderKPIS();
             renderProducts();
-            showToast("✓ Configurações da loja salvas!");
+            pushToFirebaseCloud();
+            showToast("✓ Configurações salvas e sincronizadas na Nuvem!");
         }
 
-        function resetToDefaults() {
+        async function resetToDefaults() {
             if (confirm("Deseja redefinir todas as configurações, textos, preços e taxas para o padrão original?")) {
                 localStorage.removeItem('brimo_products');
                 localStorage.removeItem('brimo_delivery_bairros');
                 localStorage.removeItem('brimo_store_config');
+                productsState = DEFAULT_PRODUCTS;
+                bairrosState = DEFAULT_BAIRROS;
+                storeConfig = {
+                    isOpen: true,
+                    whatsapp: "5512992424864",
+                    pixKey: "55.574.702/0001-70",
+                    condominioFee: 2.00,
+                    paoFolhaActive: true,
+                    paoFolhaPrice: 10.00,
+                    closedMsg: "Estamos fechados no momento. Nosso horário de atendimento é de Terça a Domingo das 18h às 23h30.",
+                    openingHours: "Terça a Domingo: 18h às 23h30",
+                    prepTime: "30 - 45 min"
+                };
+                await pushToFirebaseCloud();
                 location.reload();
             }
         }

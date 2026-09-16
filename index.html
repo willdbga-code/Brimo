@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:wght@400;500;600;700;800;900&family=Rye&display=swap" rel="stylesheet">
 
+    <!-- Firebase Realtime Database SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         /* ================= PALETA & DESIGN SYSTEM ================= */
         :root {
@@ -2515,12 +2519,81 @@
             }
         }
 
+        /* === FIREBASE REALTIME DATABASE SYNC (NUVEM GLOBAL) === */
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwziUPjwfovAcaUIkREpOTvpeRS5BvOLs",
+            authDomain: "brimo-2e626.firebaseapp.com",
+            databaseURL: "https://brimo-2e626-default-rtdb.firebaseio.com",
+            projectId: "brimo-2e626",
+            storageBucket: "brimo-2e626.firebasestorage.app",
+            messagingSenderId: "909276344387",
+            appId: "1:909276344387:web:496cbfbc434112eef964f6",
+            measurementId: "G-7G7L9NZVQH"
+        };
+
+        let db = null;
+        try {
+            if (typeof firebase !== 'undefined') {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.database();
+            }
+        } catch (e) {
+            console.warn("Erro ao iniciar Firebase no site:", e);
+        }
+
+        function initFirebaseSync() {
+            if (db) {
+                db.ref('brimo_data').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        applyCloudData(data);
+                    }
+                }, (err) => {
+                    console.warn("Firebase listener aviso, usando fallback REST:", err);
+                    fetchFirebaseRest();
+                });
+            } else {
+                fetchFirebaseRest();
+            }
+        }
+
+        async function fetchFirebaseRest() {
+            try {
+                const res = await fetch('https://brimo-2e626-default-rtdb.firebaseio.com/brimo_data.json');
+                const data = await res.json();
+                if (data) {
+                    applyCloudData(data);
+                }
+            } catch (err) {
+                console.warn("Erro ao buscar dados do Firebase REST:", err);
+            }
+        }
+
+        function applyCloudData(data) {
+            if (data.products && Array.isArray(data.products)) {
+                localStorage.setItem('brimo_products', JSON.stringify(data.products));
+            }
+            if (data.bairros && typeof data.bairros === 'object') {
+                localStorage.setItem('brimo_delivery_bairros', JSON.stringify(data.bairros));
+            }
+            if (data.storeConfig && typeof data.storeConfig === 'object') {
+                localStorage.setItem('brimo_store_config', JSON.stringify(data.storeConfig));
+            }
+            syncAdminConfig();
+            syncCartPrices();
+            updateCartUI();
+            if (typeof updateModalTotals === 'function') updateModalTotals();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             syncAdminConfig();
             syncCartPrices();
             updateCartUI();
             initSlider();
             initScrollRevealDeck();
+            initFirebaseSync();
         });
 
         // Sincroniza em tempo real se o admin mudar dados em outra aba
