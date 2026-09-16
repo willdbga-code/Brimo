@@ -982,6 +982,24 @@
                 </div>
             </div>
 
+            <!-- BANNER DE CONTROLE LOJA ABERTA / FECHADA -->
+            <div id="store-status-banner" style="display: flex; justify-content: space-between; align-items: center; background: rgba(37, 211, 102, 0.12); border: 2px solid rgba(37, 211, 102, 0.5); border-radius: 14px; padding: 14px 22px; margin-bottom: 22px; flex-wrap: wrap; gap: 15px; transition: 0.3s;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span id="store-banner-icon" style="font-size: 2.2rem;">🟢</span>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h3 id="store-banner-title" style="color: var(--green); font-size: 1.15rem; font-weight: 800; margin: 0;">Loja Aberta para Pedidos</h3>
+                            <span id="store-banner-badge" style="background: rgba(37,211,102,0.2); color: var(--green); border: 1px solid var(--green); font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 12px;">CLIENTES PODEM PEDIR</span>
+                        </div>
+                        <p id="store-banner-desc" style="color: #BBB; font-size: 0.83rem; margin: 4px 0 0;">Todos os botões de adicionar ao pedido estão liberados no site.</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-store-banner-toggle" onclick="toggleStoreStatus()" style="background: #9D0208; color: #FFF; border: 1px solid #FFBA08; border-radius: 10px; padding: 12px 22px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(157, 2, 8, 0.4); transition: 0.2s;">
+                    <span id="btn-store-banner-icon">🔒</span>
+                    <span id="btn-store-banner-text">Fechar Loja Agora (Bloquear Pedidos)</span>
+                </button>
+            </div>
+
             <!-- TABS DE NAVEGAÇÃO -->
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="switchTab('products')">
@@ -1088,16 +1106,21 @@
             <!-- TAB 3: CONFIGURAÇÕES -->
             <section id="tab-settings" class="tab-content">
                 <div class="settings-card">
-                    <h3 class="settings-title">📞 Contatos & Recebimento de Pedidos</h3>
+                    <h3 class="settings-title">📞 Contatos & Recebimento de Pedidos (WhatsApp & PIX)</h3>
                     <div class="form-grid-2">
                         <div class="setting-group">
                             <label>Número do WhatsApp para Pedidos (com DDI e DDD):</label>
                             <input type="text" id="cfg-whatsapp-num" value="5512992424864" placeholder="Ex: 5512992424864">
                         </div>
                         <div class="setting-group">
-                            <label>Chave PIX (CNPJ ou Chave Cadastrada):</label>
+                            <label>Chave PIX (CNPJ, Celular, CPF ou E-mail):</label>
                             <input type="text" id="cfg-pix-key" value="55.574.702/0001-70" placeholder="Ex: 55574702000170">
                         </div>
+                    </div>
+                    <div class="setting-group" style="margin-top: 15px;">
+                        <label>Nome do Favorecido / Quem vai receber o Pix:</label>
+                        <input type="text" id="cfg-pix-name" value="BRIMO COMIDA ARABE LTDA" placeholder="Ex: BRIMO COMIDA ARABE LTDA ou Willian da Silva">
+                        <small style="color: #AAA; font-size: 0.8rem; margin-top: 4px; display: block;">💡 Esse nome será exibido para o cliente na área de pagamento via PIX no checkout e também na mensagem final do WhatsApp.</small>
                     </div>
                 </div>
 
@@ -1683,6 +1706,7 @@
         let storeConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {
             whatsapp: "5512992424864",
             pixKey: "55.574.702/0001-70",
+            pixName: "BRIMO COMIDA ARABE LTDA",
             condominioFee: 2.00,
             paoFolhaActive: true,
             paoFolhaPrice: 10.00,
@@ -1692,6 +1716,7 @@
             isOpen: true
         };
 
+        if (storeConfig.pixName === undefined) storeConfig.pixName = "BRIMO COMIDA ARABE LTDA";
         if (storeConfig.paoFolhaActive === undefined) storeConfig.paoFolhaActive = true;
         if (storeConfig.paoFolhaPrice === undefined) storeConfig.paoFolhaPrice = 10.00;
 
@@ -1758,12 +1783,75 @@
         function renderStoreStatus() {
             const pill = document.getElementById('store-status-toggle');
             const label = document.getElementById('store-status-label');
+            const banner = document.getElementById('store-status-banner');
+            const bannerIcon = document.getElementById('store-banner-icon');
+            const bannerTitle = document.getElementById('store-banner-title');
+            const bannerBadge = document.getElementById('store-banner-badge');
+            const bannerDesc = document.getElementById('store-banner-desc');
+            const bannerBtn = document.getElementById('btn-store-banner-toggle');
+            const bannerBtnIcon = document.getElementById('btn-store-banner-icon');
+            const bannerBtnText = document.getElementById('btn-store-banner-text');
+
             if (storeConfig.isOpen) {
-                pill.classList.remove('closed');
-                label.innerText = "Loja Aberta";
+                if (pill) {
+                    pill.classList.remove('closed');
+                    if (label) label.innerText = "Loja Aberta";
+                    pill.title = "Loja Aberta - Clique para Fechar a loja no site";
+                }
+                if (banner) {
+                    banner.style.background = 'rgba(37, 211, 102, 0.12)';
+                    banner.style.borderColor = 'rgba(37, 211, 102, 0.5)';
+                }
+                if (bannerIcon) bannerIcon.innerText = '🟢';
+                if (bannerTitle) {
+                    bannerTitle.style.color = 'var(--green)';
+                    bannerTitle.innerText = 'Loja Aberta para Pedidos';
+                }
+                if (bannerBadge) {
+                    bannerBadge.style.background = 'rgba(37, 211, 102, 0.2)';
+                    bannerBadge.style.color = 'var(--green)';
+                    bannerBadge.style.borderColor = 'var(--green)';
+                    bannerBadge.innerText = 'CLIENTES PODEM PEDIR';
+                }
+                if (bannerDesc) bannerDesc.innerText = 'Todos os botões de adicionar ao pedido estão liberados no site.';
+                if (bannerBtn) {
+                    bannerBtn.style.background = '#9D0208';
+                    bannerBtn.style.color = '#FFF';
+                    bannerBtn.style.borderColor = '#FFBA08';
+                    bannerBtn.style.boxShadow = '0 4px 15px rgba(157, 2, 8, 0.4)';
+                }
+                if (bannerBtnIcon) bannerBtnIcon.innerText = '🔒';
+                if (bannerBtnText) bannerBtnText.innerText = 'Fechar Loja Agora (Bloquear Pedidos)';
             } else {
-                pill.classList.add('closed');
-                label.innerText = "Loja Fechada";
+                if (pill) {
+                    pill.classList.add('closed');
+                    if (label) label.innerText = "LOJA FECHADA";
+                    pill.title = "Loja Fechada - Clique para Abrir a loja no site";
+                }
+                if (banner) {
+                    banner.style.background = 'rgba(255, 77, 77, 0.14)';
+                    banner.style.borderColor = '#FF4D4D';
+                }
+                if (bannerIcon) bannerIcon.innerText = '🔴';
+                if (bannerTitle) {
+                    bannerTitle.style.color = '#FF4D4D';
+                    bannerTitle.innerText = 'Loja Fechada no Momento';
+                }
+                if (bannerBadge) {
+                    bannerBadge.style.background = 'rgba(255, 77, 77, 0.25)';
+                    bannerBadge.style.color = '#FF8888';
+                    bannerBadge.style.borderColor = '#FF4D4D';
+                    bannerBadge.innerText = 'PEDIDOS BLOQUEADOS NO SITE';
+                }
+                if (bannerDesc) bannerDesc.innerText = 'O site está exibindo o popup de loja fechada e todos os botões de adicionar ao pedido estão bloqueados.';
+                if (bannerBtn) {
+                    bannerBtn.style.background = 'var(--green)';
+                    bannerBtn.style.color = '#111';
+                    bannerBtn.style.borderColor = 'var(--green)';
+                    bannerBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.4)';
+                }
+                if (bannerBtnIcon) bannerBtnIcon.innerText = '🟢';
+                if (bannerBtnText) bannerBtnText.innerText = 'Abrir Loja Agora (Liberar Pedidos)';
             }
         }
 
@@ -2055,6 +2143,8 @@
         function loadSettingsInputs() {
             document.getElementById('cfg-whatsapp-num').value = storeConfig.whatsapp || "5512992424864";
             document.getElementById('cfg-pix-key').value = storeConfig.pixKey || "55.574.702/0001-70";
+            const pixNameInput = document.getElementById('cfg-pix-name');
+            if (pixNameInput) pixNameInput.value = storeConfig.pixName || "BRIMO COMIDA ARABE LTDA";
             document.getElementById('cfg-condominio-fee').value = (storeConfig.condominioFee || 2.00).toFixed(2);
             document.getElementById('cfg-closed-msg').value = storeConfig.closedMsg || "";
             document.getElementById('cfg-opening-hours').value = storeConfig.openingHours || "";
@@ -2073,6 +2163,8 @@
         function saveSettings() {
             storeConfig.whatsapp = document.getElementById('cfg-whatsapp-num').value.trim();
             storeConfig.pixKey = document.getElementById('cfg-pix-key').value.trim();
+            const pixNameInput = document.getElementById('cfg-pix-name');
+            if (pixNameInput) storeConfig.pixName = pixNameInput.value.trim() || "BRIMO COMIDA ARABE LTDA";
             storeConfig.condominioFee = parseFloat(document.getElementById('cfg-condominio-fee').value) || 2.00;
             storeConfig.closedMsg = document.getElementById('cfg-closed-msg').value.trim();
             storeConfig.openingHours = document.getElementById('cfg-opening-hours').value.trim();
@@ -2088,6 +2180,7 @@
             }
 
             localStorage.setItem('brimo_store_config', JSON.stringify(storeConfig));
+            renderStoreStatus();
             renderPaoFolhaControls();
             renderKPIS();
             renderProducts();
@@ -2106,6 +2199,7 @@
                     isOpen: true,
                     whatsapp: "5512992424864",
                     pixKey: "55.574.702/0001-70",
+                    pixName: "BRIMO COMIDA ARABE LTDA",
                     condominioFee: 2.00,
                     paoFolhaActive: true,
                     paoFolhaPrice: 10.00,

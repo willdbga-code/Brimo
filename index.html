@@ -2246,7 +2246,7 @@
                                 </div>
 
                                 <div class="pix-extra-info">
-                                    <span>🏢 <strong>Favorecido:</strong> BRIMO COMIDA ARABE LTDA</span>
+                                    <span>🏢 <strong>Favorecido:</strong> <span id="pix-favorecido-display">BRIMO COMIDA ARABE LTDA</span></span>
                                 </div>
 
                                 <!-- Área de Anexo de Comprovante -->
@@ -2304,6 +2304,35 @@
                 <button class="ad-add-btn" onclick="addSauceExtra('Molho de Alho Especial', 3)">
                     + Adicionar Molho (+ R$ 3,00)
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= POPUP DE LOJA FECHADA ================= -->
+    <div class="modal-overlay" id="store-closed-modal" style="display: none; z-index: 10000; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);">
+        <div class="modal-container" style="max-width: 480px; width: 90%; text-align: center; padding: 32px 24px; border: 2px solid #9D0208; box-shadow: 0 10px 40px rgba(0,0,0,0.8); background: #181818; border-radius: 18px; position: relative; margin: auto;">
+            <span class="close-modal" onclick="closeStoreClosedPopup()" style="position: absolute; top: 14px; right: 18px; font-size: 1.8rem; color: #888; cursor: pointer; line-height: 1;">×</span>
+            <div style="font-size: 3.5rem; margin-bottom: 12px; animation: pulse 2s infinite;">🌙</div>
+            <span style="background: rgba(255, 77, 77, 0.2); color: #FF6666; border: 1px solid #FF4D4D; padding: 4px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                Cozinha Fechada no Momento
+            </span>
+            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.6rem; margin: 15px 0 10px; font-weight: 800;">
+                Estamos Fechados
+            </h2>
+            <p id="closed-popup-msg" style="color: #DDD; font-size: 0.95rem; line-height: 1.5; margin-bottom: 18px;">
+                No momento nossa cozinha está fechada e não estamos recebendo novos pedidos.
+            </p>
+            <div style="background: #222; border-radius: 12px; padding: 14px; margin-bottom: 22px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="color: var(--gold); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">🕒 Horário de Atendimento</div>
+                <div id="closed-popup-hours" style="color: #FFF; font-size: 1rem; font-weight: 600;">Terça a Domingo das 18h às 23h30</div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button type="button" onclick="closeStoreClosedPopup()" style="background: rgba(255, 255, 255, 0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 12px 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;">
+                    👀 Ver Cardápio Mesmo Assim
+                </button>
+                <a id="closed-popup-whatsapp-btn" href="https://wa.me/5512992424864?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20quando%20o%20Brimo%20estar%C3%A1%20aberto%20para%20pedidos" target="_blank" style="background: var(--green); color: #111; border-radius: 10px; padding: 12px 20px; font-weight: 800; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>💬 Falar no WhatsApp</span>
+                </a>
             </div>
         </div>
     </div>
@@ -2410,29 +2439,70 @@
             }
         }
 
-        function checkStoreStatusBanner() {
+        function showStoreClosedPopup() {
+            const modal = document.getElementById('store-closed-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeStoreClosedPopup() {
+            const modal = document.getElementById('store-closed-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                sessionStorage.setItem('brimo_closed_popup_dismissed', 'true');
+            }
+        }
+
+        function checkStoreStatus() {
             try {
                 const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
-                if (savedStoreConfig.isOpen === false) {
-                    let banner = document.getElementById('store-closed-banner');
+                const isStoreOpen = savedStoreConfig.isOpen !== false;
+
+                // 1. Banner superior fixo
+                let banner = document.getElementById('store-closed-banner');
+                if (!isStoreOpen) {
                     if (!banner) {
                         banner = document.createElement('div');
                         banner.id = 'store-closed-banner';
-                        banner.style.cssText = 'background: #9D0208; color: #FFF; text-align: center; padding: 10px 16px; font-size: 0.88rem; font-weight: 700; position: sticky; top: 0; z-index: 999; border-bottom: 2px solid #FFBA08; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
-                        banner.innerHTML = `🔴 <strong>AVISO:</strong> ${savedStoreConfig.closedMsg || 'No momento nossa cozinha está fechada. Você pode montar seu pedido e agendar!'}`;
+                        banner.style.cssText = 'background: #9D0208; color: #FFF; text-align: center; padding: 12px 16px; font-size: 0.9rem; font-weight: 700; position: sticky; top: 0; z-index: 999; border-bottom: 2px solid #FFBA08; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;';
                         document.body.insertBefore(banner, document.body.firstChild);
                     }
+                    banner.innerHTML = `<span>🔴 <strong>LOJA FECHADA NO MOMENTO:</strong> ${savedStoreConfig.closedMsg || 'Não estamos aceitando pedidos agora.'}</span> <button type="button" onclick="showStoreClosedPopup()" style="background: rgba(0,0,0,0.5); border: 1px solid #FFBA08; color: #FFBA08; border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">Ver Horários & Contato</button>`;
+
+                    // Abre o popup automaticamente na página inicial se não tiver sido fechado nesta sessão
+                    if (!sessionStorage.getItem('brimo_closed_popup_dismissed')) {
+                        showStoreClosedPopup();
+                    }
                 } else {
-                    const existingBanner = document.getElementById('store-closed-banner');
-                    if (existingBanner) existingBanner.remove();
+                    if (banner) banner.remove();
+                    closeStoreClosedPopup();
+                    sessionStorage.removeItem('brimo_closed_popup_dismissed');
                 }
+
+                // 2. Atualiza textos do Popup de Loja Fechada
+                const popupMsg = document.getElementById('closed-popup-msg');
+                if (popupMsg) {
+                    popupMsg.innerText = savedStoreConfig.closedMsg || 'No momento nossa cozinha está fechada e não estamos recebendo novos pedidos.';
+                }
+                const popupHours = document.getElementById('closed-popup-hours');
+                if (popupHours) {
+                    popupHours.innerText = savedStoreConfig.openingHours || 'Terça a Domingo das 18h às 23h30';
+                }
+                const popupWaBtn = document.getElementById('closed-popup-whatsapp-btn');
+                if (popupWaBtn && savedStoreConfig.whatsapp) {
+                    popupWaBtn.href = `https://wa.me/${savedStoreConfig.whatsapp}?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20quando%20o%20Brimo%20estar%C3%A1%20aberto%20para%20pedidos`;
+                }
+
+                return isStoreOpen;
             } catch (e) {
                 console.error("Erro ao verificar status da loja:", e);
+                return true;
             }
         }
 
         function syncAdminConfig() {
-            checkStoreStatusBanner();
+            const isStoreOpen = checkStoreStatus();
             const paoFolhaCfg = getPaoFolhaConfig();
 
             try {
@@ -2485,26 +2555,86 @@
                                 const pfOpt = showPaoFolha ? card.querySelector('.pao-folha-opt input[type="checkbox"]') : null;
                                 const pfId = pfOpt ? `'${pfOpt.id}'` : 'null';
                                 const safeName = p.name.replace(/'/g, "\\'");
-                                btnEl.setAttribute('onclick', `addToCart(this, '${safeName}', ${p.price}, ${pfId})`);
 
-                                if (!p.active) {
+                                if (!isStoreOpen) {
+                                    // LOJA FECHADA: Bloqueia todos os botões do cardápio
+                                    card.style.opacity = '0.9';
+                                    btnEl.disabled = true;
+                                    btnEl.innerText = '🔴 Loja Fechada';
+                                    btnEl.style.background = '#2c1212';
+                                    btnEl.style.borderColor = '#9D0208';
+                                    btnEl.style.color = '#ff9999';
+                                    btnEl.style.cursor = 'not-allowed';
+                                    btnEl.setAttribute('onclick', 'showStoreClosedPopup()');
+                                } else if (!p.active) {
                                     card.style.opacity = '0.55';
                                     btnEl.innerText = 'Esgotado por Hoje';
                                     btnEl.disabled = true;
                                     btnEl.style.background = '#333';
+                                    btnEl.style.borderColor = '';
+                                    btnEl.style.color = '';
                                     btnEl.style.cursor = 'not-allowed';
+                                    btnEl.setAttribute('onclick', '');
                                 } else {
                                     card.style.opacity = '1';
                                     btnEl.disabled = false;
                                     btnEl.style.background = '';
+                                    btnEl.style.borderColor = '';
+                                    btnEl.style.color = '';
                                     btnEl.style.cursor = 'pointer';
-                                    if (btnEl.innerText === 'Esgotado por Hoje') {
-                                        btnEl.innerText = p.category === 'Sobremesas Árabes' ? 'Adicionar Sobremesa' : 'Adicionar ao Pedido';
-                                    }
+                                    btnEl.innerText = p.category === 'Sobremesas Árabes' ? 'Adicionar Sobremesa' : 'Adicionar ao Pedido';
+                                    btnEl.setAttribute('onclick', `addToCart(this, '${safeName}', ${p.price}, ${pfId})`);
                                 }
                             }
                         }
                     });
+                }
+
+                // Fallback para qualquer outro botão .add-btn se a loja estiver fechada
+                if (!isStoreOpen) {
+                    document.querySelectorAll('.add-btn').forEach(btn => {
+                        btn.disabled = true;
+                        btn.innerText = '🔴 Loja Fechada';
+                        btn.style.background = '#2c1212';
+                        btn.style.borderColor = '#9D0208';
+                        btn.style.color = '#ff9999';
+                        btn.style.cursor = 'not-allowed';
+                        btn.setAttribute('onclick', 'showStoreClosedPopup()');
+                    });
+                }
+
+                // Bloqueia/Libera o botão de molho extra no modal
+                const extraSauceBtn = document.querySelector('.ad-add-btn');
+                if (extraSauceBtn) {
+                    if (!isStoreOpen) {
+                        extraSauceBtn.disabled = true;
+                        extraSauceBtn.innerText = '🔴 Loja Fechada';
+                        extraSauceBtn.style.opacity = '0.5';
+                        extraSauceBtn.style.cursor = 'not-allowed';
+                    } else {
+                        extraSauceBtn.disabled = false;
+                        extraSauceBtn.innerText = '+ Adicionar Molho (+ R$ 3,00)';
+                        extraSauceBtn.style.opacity = '1';
+                        extraSauceBtn.style.cursor = 'pointer';
+                    }
+                }
+
+                // Bloqueia/Libera o botão de finalizar pedido
+                const finishBtn = document.querySelector('.btn-whatsapp-finish');
+                if (finishBtn) {
+                    if (!isStoreOpen) {
+                        finishBtn.disabled = true;
+                        finishBtn.innerText = '🔴 Loja Fechada - Pedidos Bloqueados';
+                        finishBtn.style.background = '#333';
+                        finishBtn.style.color = '#888';
+                        finishBtn.style.cursor = 'not-allowed';
+                    } else {
+                        finishBtn.disabled = false;
+                        finishBtn.innerText = 'Enviar Pedido para o WhatsApp ➔';
+                        finishBtn.style.background = '';
+                        finishBtn.style.color = '';
+                        finishBtn.style.cursor = 'pointer';
+                    }
                 }
 
                 const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config'));
@@ -2512,6 +2642,10 @@
                     if (savedCfg.pixKey) {
                         const pixCodeEl = document.querySelector('.pix-key-code');
                         if (pixCodeEl) pixCodeEl.innerText = savedCfg.pixKey;
+                    }
+                    if (savedCfg.pixName) {
+                        const pixNameEl = document.getElementById('pix-favorecido-display');
+                        if (pixNameEl) pixNameEl.innerText = savedCfg.pixName;
                     }
                 }
             } catch (e) {
@@ -2742,6 +2876,12 @@
 
         /* === 5. ADICIONAR ITEM AO CARRINHO === */
         function addToCart(btnElement, itemName, basePrice, checkboxId = null) {
+            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            if (savedStoreConfig.isOpen === false) {
+                showStoreClosedPopup();
+                return;
+            }
+
             const paoFolhaCfg = getPaoFolhaConfig();
             let finalPrice = basePrice;
             let finalName = itemName;
@@ -2772,6 +2912,12 @@
         }
 
         function addSauceExtra(sauceName, price) {
+            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            if (savedStoreConfig.isOpen === false) {
+                showStoreClosedPopup();
+                return;
+            }
+
             cart.push({ 
                 id: Date.now() + Math.floor(Math.random() * 1000), 
                 name: sauceName, 
@@ -3130,6 +3276,11 @@
         }
 
         function openModal() {
+            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            if (savedStoreConfig.isOpen === false) {
+                showStoreClosedPopup();
+                return;
+            }
             renderCartItems();
             document.getElementById('checkout-modal').classList.add('active');
         }
@@ -3539,6 +3690,12 @@
 
         /* === 10. ENVIO PARA O WHATSAPP COM ENDEREÇO ESTRUTURADO E VALIDAÇÃO DE FRETE === */
         async function sendToWhatsApp() {
+            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
+            if (savedStoreConfig.isOpen === false) {
+                showStoreClosedPopup();
+                return;
+            }
+
             if (cart.length === 0) {
                 alert("Adicione pelo menos um item ao seu carrinho antes de enviar o pedido.");
                 return;
@@ -3579,53 +3736,49 @@
                 customerCity = document.getElementById('cust-city').value.trim();
                 customerRef = document.getElementById('cust-ref').value.trim();
 
-                if (!customerName) {
-                    alert("Por favor, preencha o seu Nome Completo.");
-                    document.getElementById('cust-name').focus();
+                if (!customerName || !customerStreet || !customerNum || !customerBairro) {
+                    alert("Por favor, preencha os campos obrigatórios de endereço (Nome, Rua, Número e Bairro).");
                     return;
                 }
-
-                if (!customerStreet || !customerNum || !customerBairro) {
-                    alert("Por favor, informe a Rua, o Número (Nº) e o Bairro para a entrega.");
-                    if (!customerStreet) document.getElementById('cust-street').focus();
-                    else if (!customerNum) document.getElementById('cust-num').focus();
-                    else document.getElementById('cust-bairro').focus();
-                    return;
+            } else {
+                customerName = prompt("Como podemos te chamar para identificar a retirada do seu pedido?");
+                if (!customerName || customerName.trim() === "") {
+                    customerName = "Cliente";
                 }
             }
 
-            let msg = "*🕌 NOVO PEDIDO BRIMO COMIDA ÁRABE*\n\n";
+            let msg = `*--- NOVO PEDIDO BRIMO COMIDA ÁRABE ---*\n\n`;
+            msg += `👤 *Cliente:* ${customerName}\n`;
+            msg += `🛵 *Tipo:* ${isDelivery ? "Entrega Delivery" : "Retirada no Local"}\n\n`;
 
             if (isDelivery) {
-                msg += `👤 *Cliente:* ${customerName}\n`;
-                msg += `🛵 *Modo:* Entrega em Domicílio (Endereço Confirmado)\n`;
-                msg += `📍 *Endereço:* ${customerStreet}, Nº ${customerNum}`;
-                if (customerComp) msg += ` - ${customerComp}`;
-                msg += `\n`;
-                msg += `📍 *Bairro:* ${customerBairro} — ${customerCity}`;
-                if (customerCEP) msg += ` (CEP: ${customerCEP})`;
-                msg += `\n`;
-                if (customerRef) msg += `📍 *Ponto de Referência:* ${customerRef}\n`;
+                msg += `📍 *Endereço de Entrega:*\n`;
+                msg += `Rua: ${customerStreet}, Nº ${customerNum}`;
+                if (customerComp) msg += ` (${customerComp})`;
+                msg += `\nBairro: ${customerBairro}`;
+                if (customerCity) msg += ` - ${customerCity}`;
+                if (customerCEP) msg += `\nCEP: ${customerCEP}`;
+                if (customerRef) msg += `\nReferência: ${customerRef}`;
+                msg += `\n\n`;
             } else {
-                msg += `🛵 *Modo:* Retirar no Local\n📍 *Unidade:* Rua Dona Carmelita Gama, 385 - São Benedito, Pindamonhangaba - SP\n`;
+                msg += `📍 *Unidade:* Rua Dona Carmelita Gama, 385 - São Benedito, Pindamonhangaba - SP\n\n`;
             }
 
-            msg += `\n*🛒 Itens do Pedido:*\n`;
-            cart.forEach(item => {
-                msg += `• 1x *${item.name}* — R$ ${item.price.toFixed(2).replace('.', ',')}\n`;
+            msg += `📋 *Itens do Pedido:*\n`;
+            let subtotal = 0;
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                msg += `${index + 1}. *${item.name}* - R$ ${item.price.toFixed(2).replace('.', ',')}\n`;
                 if (item.removedIngredients && item.removedIngredients.length > 0) {
-                    msg += `   └ 🚫 *SEM:* ${item.removedIngredients.join(', ')}\n`;
+                    msg += `   _⚠️ Sem: ${item.removedIngredients.join(', ')}_\n`;
                 }
             });
 
-            const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
-
             if (isDelivery) {
-                const chkCondominio = document.getElementById('chk-condominio');
-                const isCondominio = chkCondominio && chkCondominio.checked;
                 const deliveryFee = getDynamicDeliveryFee();
                 const total = subtotal + deliveryFee;
-                const distStr = currentDeliveryDistanceKm > 0 ? ` (~${currentDeliveryDistanceKm} km)` : '';
+                const distStr = currentDeliveryDistanceKm > 0 ? ` [${currentDeliveryDistanceKm.toFixed(1).replace('.', ',')} km]` : '';
+                const isCondominio = document.getElementById('chk-condominio') && document.getElementById('chk-condominio').checked;
                 const condLabel = isCondominio ? ' + Condomínio' : '';
 
                 if (isCondominio) {
@@ -3640,9 +3793,9 @@
             }
 
             if (isPix) {
-                const savedCfg = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
-                const pixKey = savedCfg.pixKey || "55.574.702/0001-70";
-                msg += `\n💳 *Forma de Pagamento:* PIX (Chave CNPJ: ${pixKey})\n`;
+                const pixKey = savedStoreConfig.pixKey || "55.574.702/0001-70";
+                const pixName = savedStoreConfig.pixName || "BRIMO COMIDA ARABE LTDA";
+                msg += `\n💳 *Forma de Pagamento:* PIX (Chave CNPJ: ${pixKey} - Favorecido: ${pixName})\n`;
                 if (attachedReceiptUrl) {
                     msg += `📎 *Link do Comprovante:* ${attachedReceiptUrl}\n`;
                 } else if (attachedReceiptName) {
@@ -3668,15 +3821,9 @@
                     customerName: isDelivery ? customerName : "Cliente (Retirada)",
                     customerPhone: "",
                     isDelivery: isDelivery,
-                    address: isDelivery ? `${customerStreet}, Nº ${customerNum}${customerComp ? ` (${customerComp})` : ''} - ${customerBairro}` : "Retirada no Local",
-                    isCondominio: isCondominio,
-                    items: cart.map(i => ({
-                        name: i.name,
-                        price: i.price,
-                        removedIngredients: i.removedIngredients || []
-                    })),
-                    subtotal: subtotal,
-                    deliveryFee: finalDeliveryFee,
+                    bairro: isDelivery ? (currentDeliveryBairroName || customerBairro) : "Retirada no Local",
+                    condominio: isCondominio,
+                    items: cart.map(i => ({ name: i.name, price: i.price, removedIngredients: i.removedIngredients || [] })),
                     total: finalTotal,
                     paymentMethod: isPix ? "PIX" : "Pagar na Entrega/Retirada",
                     receiptUrl: attachedReceiptUrl || "",
@@ -3690,7 +3837,6 @@
                 console.error("Erro ao salvar pedido no histórico:", err);
             }
 
-            const savedStoreConfig = JSON.parse(localStorage.getItem('brimo_store_config')) || {};
             const waNumber = savedStoreConfig.whatsapp || "5512992424864";
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/${waNumber}?text=${encodedMsg}`, '_blank');
